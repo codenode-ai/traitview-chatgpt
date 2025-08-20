@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --radius: 1rem;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+.container-page {
+  @apply mx-auto max-w-6xl p-6;
+}
+.sidebar {
+  @apply fixed left-0 top-0 h-full w-64 bg-white border-r border-border;
+}
+.main {
+  @apply ml-64;
+}
+.navlink {
+  @apply flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-muted transition;
+}
+.header {
+  @apply sticky top-0 z-10 bg-white border-b border-border;
+}
+.badge {
+  @apply inline-flex items-center rounded-xl border border-border bg-muted px-2 py-0.5 text-xs;
+}
+.input-like {
+  @apply h-10 w-full rounded-xl border border-input bg-white px-3 py-2 text-sm;
+}
+
+/* Hovers suaves para cartões e botões */
+.hover-card {
+  @apply transition-transform duration-150 ease-out hover:-translate-y-0.5 hover:shadow-md;
+}
+.hover-btn {
+  @apply transition-transform duration-150 ease-out hover:-translate-y-0.5;
+}
