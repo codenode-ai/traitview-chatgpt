@@ -6,27 +6,46 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "hsl(0 0% 100%)",
-        foreground: "hsl(224 71.4% 4.1%)",
+        // Cores Dark
+        'dark-bg': '#1a1a2e',
+        'dark-card': '#16213e',
+        'dark-sidebar': '#0f3460',
+        'dark-text': '#e6e6e6',
+        'dark-text-secondary': '#a0a0a0',
+        
+        // Cores Vibrantes
+        'vibrant-blue': '#4a90e2',
+        'vibrant-green': '#7ed321',
+        'vibrant-yellow': '#f8e71c',
+        'vibrant-purple': '#9013fe',
+        'vibrant-red': '#d0021b',
+        'vibrant-pink': '#ff6b6b',
+        
+        background: "var(--background)",
+        foreground: "var(--foreground)",
         primary: {
-          DEFAULT: "hsl(44, 95%, 52%)",
-          foreground: "hsl(222.2 47.4% 11.2%)",
+          DEFAULT: "var(--primary)",
+          foreground: "var(--primary-foreground)",
+        },
+        secondary: {
+          DEFAULT: "var(--secondary)",
+          foreground: "var(--secondary-foreground)",
         },
         muted: {
-          DEFAULT: "hsl(210 40% 96.1%)",
-          foreground: "hsl(215.4 16.3% 46.9%)",
+          DEFAULT: "var(--muted)",
+          foreground: "var(--muted-foreground)",
         },
         card: {
-          DEFAULT: "hsl(0 0% 100%)",
-          foreground: "hsl(222.2 84% 4.9%)",
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)",
         },
-        border: "hsl(214.3 31.8% 91.4%)",
-        input: "hsl(214.3 31.8% 91.4%)",
-        ring: "hsl(222.2 84% 4.9%)"
+        border: "var(--border)",
+        input: "var(--input)",
+        ring: "var(--ring)"
       },
       borderRadius: {
-        xl: "1rem",
-        "2xl": "1.25rem"
+        xl: "var(--radius)",
+        "2xl": "calc(var(--radius) + 0.25rem)"
       }
     },
   },

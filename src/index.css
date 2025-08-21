@@ -6,36 +6,204 @@
   --radius: 1rem;
 }
 
+/* Paleta de Cores Dark com Vibrantes */
+:root {
+  /* Cores Dark */
+  --dark-bg: #1a1a2e;
+  --dark-card: #16213e;
+  --dark-sidebar: #0f3460;
+  --dark-text: #e6e6e6;
+  --dark-text-secondary: #a0a0a0;
+  
+  /* Cores Vibrantes */
+  --vibrant-blue: #4a90e2;
+  --vibrant-green: #7ed321;
+  --vibrant-yellow: #f8e71c;
+  --vibrant-purple: #9013fe;
+  --vibrant-red: #d0021b;
+  --vibrant-pink: #ff6b6b;
+  
+  /* Background e Texto */
+  --background: var(--dark-bg);
+  --foreground: var(--dark-text);
+  
+  /* Primary (usando uma cor vibrante) */
+  --primary: var(--vibrant-blue);
+  --primary-foreground: #ffffff;
+  
+  /* Secondary */
+  --secondary: var(--dark-card);
+  --secondary-foreground: var(--dark-text);
+  
+  /* Muted */
+  --muted: var(--dark-sidebar);
+  --muted-foreground: var(--dark-text-secondary);
+  
+  /* Card */
+  --card: var(--dark-sidebar);
+  --card-foreground: var(--dark-text);
+  
+  /* Border e Input */
+  --border: #2a2a4a;
+  --input: #2a2a4a;
+  --ring: var(--vibrant-blue);
+}
+
 html, body, #root {
   height: 100%;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .container-page {
   @apply mx-auto max-w-6xl p-6;
 }
+
 .sidebar {
-  @apply fixed left-0 top-0 h-full w-64 bg-white border-r border-border;
+  @apply fixed left-0 top-0 h-full w-64 bg-muted border-r border-border shadow-xl;
+  border-radius: 0 var(--radius) var(--radius) 0;
 }
+
 .main {
   @apply ml-64;
 }
+
 .navlink {
-  @apply flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-muted transition;
+  @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300;
+  color: var(--muted-foreground);
+  font-weight: 500;
 }
+
+.navlink:hover {
+  background-color: rgba(74, 144, 226, 0.15);
+  color: var(--vibrant-blue);
+  transform: translateX(4px);
+}
+
+.navlink.active {
+  background: linear-gradient(90deg, var(--vibrant-blue) 0%, var(--vibrant-purple) 100%);
+  color: var(--primary-foreground);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 .header {
-  @apply sticky top-0 z-10 bg-white border-b border-border;
+  @apply sticky top-0 z-10 bg-card border-b border-border shadow-md;
 }
+
 .badge {
-  @apply inline-flex items-center rounded-xl border border-border bg-muted px-2 py-0.5 text-xs;
+  @apply inline-flex items-center rounded-xl border border-border bg-muted px-3 py-1 text-sm font-medium;
 }
+
 .input-like {
-  @apply h-10 w-full rounded-xl border border-input bg-white px-3 py-2 text-sm;
+  @apply h-12 w-full rounded-xl border border-input bg-card px-4 py-3 text-base shadow-sm transition-colors;
+  color: #1a1a2e;
+}
+
+.input-like:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
 }
 
 /* Hovers suaves para cartões e botões */
 .hover-card {
-  @apply transition-transform duration-150 ease-out hover:-translate-y-0.5 hover:shadow-md;
+  @apply transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg;
 }
+
 .hover-btn {
-  @apply transition-transform duration-150 ease-out hover:-translate-y-0.5;
+  @apply transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:shadow-md;
+}
+
+/* Botões */
+.btn-primary {
+  @apply bg-primary text-primary-foreground;
+}
+
+.btn-primary:hover {
+  background-color: rgba(74, 144, 226, 0.9);
+}
+
+.btn-secondary {
+  @apply bg-secondary text-secondary-foreground;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(174, 198, 207, 0.9);
+}
+
+.btn-destructive {
+  @apply bg-vibrant-red text-white;
+}
+
+.btn-destructive:hover {
+  background-color: rgba(208, 2, 27, 0.9);
+}
+
+/* Cards */
+.card {
+  @apply bg-card text-card-foreground border border-border rounded-2xl shadow-lg;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+  @apply pb-3;
+}
+
+.card-title {
+  @apply text-xl font-bold;
+}
+
+.card-description {
+  @apply text-muted-foreground;
+}
+
+.card-content {
+  @apply pt-3;
+}
+
+/* Inputs */
+.input {
+  @apply border border-input bg-card rounded-xl px-4 py-3 text-base shadow-sm transition-colors;
+  outline: none;
+  color: #1a1a2e;
+}
+
+.input:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+/* Placeholder */
+.input::placeholder {
+  color: #c5a880;
+  opacity: 0.8;
+}
+
+.input:focus::placeholder {
+  color: #1a1a2e;
+  opacity: 0.6;
+}
+
+/* Labels */
+.label {
+  @apply text-sm font-medium leading-none;
+}
+
+/* Títulos */
+h1 {
+  @apply text-3xl font-extrabold tracking-tight;
+}
+
+h2 {
+  @apply text-2xl font-bold tracking-tight;
+}
+
+h3 {
+  @apply text-xl font-semibold tracking-tight;
 }

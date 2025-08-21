@@ -31,10 +31,16 @@ export default function Dashboard() {
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chart1}>
-                  <XAxis dataKey="name" />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip />
-                  <Bar dataKey="value" />
+                  <XAxis dataKey="name" stroke="#a0a0a0" />
+                  <YAxis allowDecimals={false} stroke="#a0a0a0" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#0f3460', 
+                      borderColor: '#2a2a4a', 
+                      color: '#e6e6e6' 
+                    }} 
+                  />
+                  <Bar dataKey="value" fill="#4a90e2" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -47,10 +53,10 @@ export default function Dashboard() {
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart data={radarData}>
-                  <PolarGrid />
-                  <PolarAngleAxis dataKey="k" />
-                  <PolarRadiusAxis angle={30} domain={[0, 5]} />
-                  <Radar dataKey="v" />
+                  <PolarGrid stroke="#2a2a4a" />
+                  <PolarAngleAxis dataKey="k" stroke="#a0a0a0" />
+                  <PolarRadiusAxis angle={30} domain={[0, 5]} stroke="#a0a0a0" />
+                  <Radar dataKey="v" fill="#4a90e2" fillOpacity={0.6} stroke="#4a90e2" />
                 </RadarChart>
               </ResponsiveContainer>
             </div>
