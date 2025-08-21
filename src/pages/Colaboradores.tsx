@@ -65,12 +65,12 @@ export default function Colaboradores() {
             <form onSubmit={handleSubmit(onSubmit)} className="grid gap-3">
               <div className="grid gap-1">
                 <Label>Nome</Label>
-                <Input placeholder="Ex.: Ana Lima" {...register("name")} />
+                <Input placeholder="Ex.: Ana Lima" {...register("name")} className="text-black" />
                 {errors.name && <span className="text-red-600 text-xs">{errors.name.message}</span>}
               </div>
               <div className="grid gap-1">
                 <Label>E-mail</Label>
-                <Input placeholder="ana@empresa.com" {...register("email")} />
+                <Input placeholder="ana@empresa.com" {...register("email")} className="text-black" />
                 {errors.email && <span className="text-red-600 text-xs">{errors.email.message}</span>}
               </div>
               <Button type="submit" className="mt-2">Adicionar</Button>

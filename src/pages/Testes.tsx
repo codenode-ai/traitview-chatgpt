@@ -80,19 +80,19 @@ export default function Testes() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
               <div className="grid gap-1">
                 <Label>Nome</Label>
-                <Input {...form.register("name")} placeholder="DISC, Big Five..." />
+                <Input {...form.register("name")} placeholder="DISC, Big Five..." className="text-black" />
                 {form.formState.errors.name && <span className="text-red-600 text-xs">{form.formState.errors.name.message as string}</span>}
               </div>
               <div className="grid gap-1">
                 <Label>Descrição</Label>
-                <Input {...form.register("description")} placeholder="Breve descrição" />
+                <Input {...form.register("description")} placeholder="Breve descrição" className="text-black" />
               </div>
 
               <div className="grid gap-2">
                 <Label>Perguntas</Label>
                 {qFields.map((field, idx) => (
                   <div key={field.id} className="flex gap-2 items-center">
-                    <Input {...form.register(`questions.${idx}.text` as const)} placeholder={`Pergunta ${idx + 1}`} />
+                    <Input {...form.register(`questions.${idx}.text` as const)} placeholder={`Pergunta ${idx + 1}`} className="text-black" />
                     <Button type="button" variant="outline" onClick={() => qRemove(idx)}>Remover</Button>
                   </div>
                 ))}
@@ -103,9 +103,9 @@ export default function Testes() {
                 <Label>Faixas (interpretação)</Label>
                 {bFields.map((field, idx) => (
                   <div key={field.id} className="grid grid-cols-7 gap-2 items-center">
-                    <div className="col-span-3"><Input {...form.register(`bands.${idx}.label` as const)} placeholder="Rótulo" /></div>
-                    <div><Input type="number" step="0.1" {...form.register(`bands.${idx}.min` as const)} placeholder="Min" /></div>
-                    <div><Input type="number" step="0.1" {...form.register(`bands.${idx}.max` as const)} placeholder="Max" /></div>
+                    <div className="col-span-3"><Input {...form.register(`bands.${idx}.label` as const)} placeholder="Rótulo" className="text-black" /></div>
+                    <div><Input type="number" step="0.1" {...form.register(`bands.${idx}.min` as const)} placeholder="Min" className="text-black" /></div>
+                    <div><Input type="number" step="0.1" {...form.register(`bands.${idx}.max` as const)} placeholder="Max" className="text-black" /></div>
                     <div className="col-span-2"><Button type="button" variant="outline" onClick={() => bRemove(idx)}>Remover</Button></div>
                   </div>
                 ))}
