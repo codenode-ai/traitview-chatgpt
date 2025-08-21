@@ -1,9 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useDB } from "@/stores/db";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import type { Answer } from "@/types";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { getSource } from "@/data";
 
 export default function AvaliacaoPublica() {
   const { token } = useParams();
@@ -27,7 +28,7 @@ export default function AvaliacaoPublica() {
     setAnswers(a => ({ ...a, [qid]: val }));
   }
 
-  function submitTest() {
+  async function submitTest() {
     if (!current) return;
     const payload: Answer = {
       evaluationId: evaluation.id,
@@ -35,13 +36,40 @@ export default function AvaliacaoPublica() {
       testId: current.id!,
       answers: current.questions.map(q => ({ questionId: q.id, value: answers[q.id] ?? 3 }))
     };
-    db.upsertAnswer(payload);
+
+    // Se estiver usando Supabase, chamar a função saveAnswers do Supabase
+    if (import.meta.env.VITE_DATA_SOURCE === "supabase") {
+      try {
+        const source = await getSource();
+        await source.saveAnswers(payload);
+      } catch (error) {
+        console.error("Erro ao salvar respostas:", error);
+        alert("Erro ao salvar respostas. Verifique o console para mais detalhes.");
+        return;
+      }
+    } else {
+      // Comportamento original para fonte local
+      db.upsertAnswer(payload);
+    }
 
     if (currentIdx + 1 < tests.length) {
       setCurrentIdx(idx => idx + 1);
       setAnswers({});
     } else {
-      db.completeLink(evaluation.id, linkInfo.collaboratorId);
+      // Se estiver usando Supabase, chamar a função completeLink do Supabase
+      if (import.meta.env.VITE_DATA_SOURCE === "supabase") {
+        try {
+          const source = await getSource();
+          await source.completeLink(evaluation.id, linkInfo.collaboratorId);
+        } catch (error) {
+          console.error("Erro ao marcar link como concluído:", error);
+          alert("Erro ao marcar link como concluído. Verifique o console para mais detalhes.");
+        }
+      } else {
+        // Comportamento original para fonte local
+        db.completeLink(evaluation.id, linkInfo.collaboratorId);
+      }
+      
       alert("Obrigado! Respostas registradas.");
       navigate("/");
     }

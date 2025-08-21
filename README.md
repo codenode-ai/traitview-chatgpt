@@ -1,6 +1,6 @@
 # TraitView (Completo v2)
 
-App React + Vite + TS com Tailwind, UI local estilo shadcn, Zustand (localStorage), React Router, React Query, RHF + Zod, Recharts, **Framer Motion** (animações) e **Exportar PDF** (html2canvas + jsPDF). **Sem Supabase** por enquanto — dados ficam no navegador.
+App React + Vite + TS com Tailwind, UI local estilo shadcn, Zustand (localStorage), React Router, React Query, RHF + Zod, Recharts, **Framer Motion** (animações) e **Exportar PDF** (html2canvas + jsPDF). **Agora com integração opcional com Supabase** — dados podem ser armazenados no banco de dados.
 
 ## Rodando localmente
 ```bash
@@ -19,7 +19,18 @@ npm run dev
 ## Camada de dados (troca para Supabase)
 - `src/data/index.ts` seleciona a fonte via `VITE_DATA_SOURCE` (default: `local`).
 - `src/data/local.ts` usa a store do Zustand atual.
-- `src/data/supabase.ts` é um stub com TODOs para você conectar quando decidir migrar.
+- `src/data/supabase.ts` implementa a integração com Supabase usando os serviços em `src/lib`.
+
+## Configuração do Supabase
+1. Crie um projeto no [Supabase](https://supabase.io/)
+2. Obtenha a URL do projeto e a chave anônima
+3. Adicione as variáveis de ambiente ao arquivo `.env`:
+   ```
+   VITE_SUPABASE_URL=sua_url_do_supabase
+   VITE_SUPABASE_ANON_KEY=sua_chave_anonima
+   VITE_DATA_SOURCE=supabase
+   ```
+4. Crie as tabelas no Supabase usando o schema fornecido
 
 ## Animações de UI
 - Entradas de página com **Framer Motion** (fade + translateY suave).
@@ -28,3 +39,4 @@ npm run dev
 ## Próximos passos (opcional)
 - Integrar Supabase (Auth/RLS/RPC) e mover cálculos de relatório para o servidor/Edge Function.
 - Adicionar tema escuro e skeletons de loading.
+- Implementar completamente a função `findEvaluationByToken` no Supabase.

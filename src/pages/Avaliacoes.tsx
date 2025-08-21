@@ -1,8 +1,12 @@
 import { useDB } from "@/stores/db";
 import { Button } from "@/components/ui/button";
 import { Table, THead, TBody, TR, TH, TD } from "@/components/ui/table";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { getSource } from "@/data";
+
+// TODO: Obter o ID da organização de alguma forma (por exemplo, do contexto de autenticação)
+const ORG_ID = "11111111-1111-1111-1111-111111111111"; // ID da organização demo
 
 export default function Avaliacoes() {
   const collaborators = useDB(s => s.collaborators);
@@ -18,17 +22,34 @@ export default function Avaliacoes() {
     setter(list.includes(id) ? list.filter(x => x !== id) : [...list, id]);
   }
 
-  function create() {
+  async function create() {
     if (!name || selectedTests.length === 0 || selectedCols.length === 0) {
       alert("Informe nome, ao menos 1 teste e 1 colaborador.");
       return;
     }
-    const id = createEvaluation(name, selectedTests, selectedCols);
-    const ev = evaluations.find(e => e.id === id);
-    if (ev) alert("Avaliação criada! Links gerados na tabela abaixo.");
-    setName("");
-    setSelectedTests([]);
-    setSelectedCols([]);
+
+    // Se estiver usando Supabase, chamar a função createEvaluation do Supabase
+    if (import.meta.env.VITE_DATA_SOURCE === "supabase") {
+      try {
+        const source = await getSource();
+        const id = await source.createEvaluation(name, selectedTests, selectedCols);
+        alert("Avaliação criada com sucesso!");
+        setName("");
+        setSelectedTests([]);
+        setSelectedCols([]);
+      } catch (error) {
+        console.error("Erro ao criar avaliação:", error);
+        alert("Erro ao criar avaliação. Verifique o console para mais detalhes.");
+      }
+    } else {
+      // Comportamento original para fonte local
+      const id = createEvaluation(name, selectedTests, selectedCols);
+      const ev = evaluations.find(e => e.id === id);
+      if (ev) alert("Avaliação criada! Links gerados na tabela abaixo.");
+      setName("");
+      setSelectedTests([]);
+      setSelectedCols([]);
+    }
   }
 
   return (
