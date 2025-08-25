@@ -1,20 +1,31 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
-import { useDB } from "@/stores/db";
 import { BarChart3, Users2, ClipboardList, ListChecks, PieChart } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAuthContext } from "@/providers/AuthProvider";
 
 export default function AppLayout() {
-  const seed = useDB(s => s.seed);
-  useEffect(() => { seed(); }, [seed]);
+  const { state } = useAuthContext();
+  
+  // Verificar se usuário está autenticado
+  const isAuthenticated = !!state.user;
+  const loading = state.loading;
+
+  if (loading) {
+    return <div className="p-10 text-center">Carregando...</div>;
+  }
+
+  if (!isAuthenticated) {
+    return <div className="p-10 text-center"><h1 className="text-2xl font-bold mb-2">Acesso negado</h1><p>Faça login para acessar o sistema.</p></div>;
+  }
 
   return (
     <>
       <aside className="sidebar">
         <div className="p-6">
           <div className="text-2xl font-extrabold mb-1"><span className="text-white">Trait</span><span className="text-vibrant-blue">View</span></div>
-          <p className="text-xs text-dark-text-secondary mb-6">Completo • sem Supabase</p>
+          <p className="text-xs text-dark-text-secondary mb-6">Completo • com Supabase</p>
           <nav className="flex flex-col gap-1">
             <NavLink to="/" className="navlink" end>
               <BarChart3 size={20}/> 
@@ -45,14 +56,19 @@ export default function AppLayout() {
       <main className="main">
         <header className="header">
           <div className="container-page flex items-center justify-between">
-            <div className="font-semibold text-foreground">TraitView • MVP (Local)</div>
+            <div className="font-semibold text-foreground">TraitView • MVP (Supabase)</div>
             <div className="flex gap-2">
               <Button 
-  onClick={() => { localStorage.clear(); location.reload(); }} 
+  onClick={() => { 
+    // Limpar dados locais e fazer logout
+    localStorage.clear(); 
+    sessionStorage.clear();
+    window.location.href = "/login";
+  }} 
   variant="outline" 
   className="border-border text-foreground hover:bg-muted"
 >
-  Resetar Dados
+  Sair
 </Button>
             </div>
           </div>

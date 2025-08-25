@@ -14,7 +14,7 @@ import { seedTestesOficiais } from "@/features/tests/seedTestesOficiais";
 
 export default function App() {
   const { state } = useAuthContext();
-  console.log('App.tsx: Renderizando', { user: state.user, loading: state.loading })
+  console.log('App.tsx: Renderizando', { user: state.user, loading: state.loading });
 
   // Verificar se usuário está autenticado
   const isAuthenticated = !!state.user;
@@ -22,12 +22,12 @@ export default function App() {
 
   // Semear testes oficiais quando o app carrega
   useEffect(() => {
-    console.log('App.tsx: useEffect - Iniciando seed de testes oficiais')
+    console.log('App.tsx: useEffect - Iniciando seed de testes oficiais');
     seedTestesOficiais();
   }, []);
 
   if (loading) {
-    console.log('App.tsx: Mostrando tela de carregamento')
+    console.log('App.tsx: Mostrando tela de carregamento');
     return <div className="p-10 text-center">Carregando...</div>;
   }
 
@@ -35,11 +35,11 @@ export default function App() {
   const isPublicRoute = location.pathname.startsWith("/avaliacao/");
   
   if (!isAuthenticated && !isPublicRoute && location.pathname !== "/login") {
-    console.log('App.tsx: Usuário não autenticado, redirecionando para login')
+    console.log('App.tsx: Usuário não autenticado, redirecionando para login');
     return <LoginForm />;
   }
 
-  console.log('App.tsx: Renderizando rotas protegidas')
+  console.log('App.tsx: Renderizando rotas');
   return (
     <Routes>
       {/* Rotas públicas */}

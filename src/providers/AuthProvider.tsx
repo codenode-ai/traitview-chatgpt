@@ -24,14 +24,14 @@ const initialState: AuthState = {
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
     case 'SET_USER':
-      console.log('AuthProvider: SET_USER', action.payload)
+      console.log('AuthProvider: SET_USER reducer', action.payload)
       return {
         ...state,
         user: action.payload,
         loading: false,
       }
     case 'SET_LOADING':
-      console.log('AuthProvider: SET_LOADING', action.payload)
+      console.log('AuthProvider: SET_LOADING reducer', action.payload)
       return {
         ...state,
         loading: action.payload,
@@ -57,10 +57,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     console.log('AuthProvider: useEffect inicializado')
     
-    // Verificar sessão atual
+    // Verificar sessão atual com um pequeno delay para garantir que o Supabase esteja pronto
     const checkSession = async () => {
       try {
         console.log('AuthProvider: Verificando sessão...')
+        // Adicionar um pequeno delay para garantir que o Supabase esteja pronto
+        await new Promise(resolve => setTimeout(resolve, 100))
+        
         const { data: { session } } = await supabase.auth.getSession()
         console.log('AuthProvider: Sessão obtida', session)
         
@@ -111,7 +114,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     checkSession()
 
     // Escutar mudanças na autenticação
-    console.log('AuthProvider: Configurando listener de mudança de estado')
+    console.log('AuthProvider: Configurando listener de autenticação...')
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         console.log('AuthProvider: Mudança de estado de autenticação', _event, session)
@@ -137,7 +140,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
               console.log('AuthProvider: Usuário básico criado', novoUsuario)
               dispatch({ type: 'SET_USER', payload: novoUsuario })
               
-              // Tentar promover o primeiro usuário a admin
+              // Verificar se é o primeiro usuário para promover a admin
               setTimeout(() => {
                 promoteFirstUserToAdmin()
               }, 1000)
@@ -168,6 +171,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [])
 
+  console.log('AuthProvider: Renderizando com state', state)
   return (
     <AuthContext.Provider value={{ state, dispatch }}>
       {children}
@@ -181,5 +185,6 @@ export const useAuthContext = () => {
   if (!context) {
     throw new Error('useAuthContext must be used within an AuthProvider')
   }
+  console.log('useAuthContext: Retornando contexto', context.state)
   return context
 }
