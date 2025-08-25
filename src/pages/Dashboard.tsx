@@ -13,13 +13,13 @@ export default function Dashboard() {
   } = useQuery({
     queryKey: ['colaboradores'],
     queryFn: async () => {
-      console.log('Buscando colaboradores...')
+      console.log('Dashboard: Buscando colaboradores...')
       try {
         const result = await dataService.colaboradores.getAll()
-        console.log('Colaboradores encontrados:', result)
+        console.log('Dashboard: Colaboradores encontrados:', result)
         return result
       } catch (error) {
-        console.error('Erro ao buscar colaboradores:', error)
+        console.error('Dashboard: Erro ao buscar colaboradores:', error)
         throw error
       }
     }
@@ -32,13 +32,13 @@ export default function Dashboard() {
   } = useQuery({
     queryKey: ['testes'],
     queryFn: async () => {
-      console.log('Buscando testes...')
+      console.log('Dashboard: Buscando testes...')
       try {
         const result = await dataService.testes.getAll()
-        console.log('Testes encontrados:', result)
+        console.log('Dashboard: Testes encontrados:', result)
         return result
       } catch (error) {
-        console.error('Erro ao buscar testes:', error)
+        console.error('Dashboard: Erro ao buscar testes:', error)
         throw error
       }
     }
@@ -51,13 +51,13 @@ export default function Dashboard() {
   } = useQuery({
     queryKey: ['avaliacoes'],
     queryFn: async () => {
-      console.log('Buscando avaliações...')
+      console.log('Dashboard: Buscando avaliações...')
       try {
         const result = await dataService.avaliacoes.getAll()
-        console.log('Avaliações encontradas:', result)
+        console.log('Dashboard: Avaliações encontradas:', result)
         return result
       } catch (error) {
-        console.error('Erro ao buscar avaliações:', error)
+        console.error('Dashboard: Erro ao buscar avaliações:', error)
         throw error
       }
     }
@@ -80,7 +80,7 @@ export default function Dashboard() {
 
   // Verificar se há erros
   if (errorColaboradores || errorTestes || errorAvaliacoes) {
-    console.error('Erros encontrados:', { errorColaboradores, errorTestes, errorAvaliacoes })
+    console.error('Dashboard: Erros encontrados:', { errorColaboradores, errorTestes, errorAvaliacoes })
     return (
       <motion.div 
         initial={{ opacity: 0, y: 8 }} 
@@ -90,15 +90,16 @@ export default function Dashboard() {
       >
         <h1 className="text-2xl font-bold mb-2">Erro ao carregar dashboard</h1>
         <p>Verifique o console para mais detalhes.</p>
-        {errorColaboradores && <p className="text-red-500">Erro colaboradores: {errorColaboradores.message}</p>}
-        {errorTestes && <p className="text-red-500">Erro testes: {errorTestes.message}</p>}
-        {errorAvaliacoes && <p className="text-red-500">Erro avaliações: {errorAvaliacoes.message}</p>}
+        {errorColaboradores && <p className="text-red-500 text-sm">{errorColaboradores.message}</p>}
+        {errorTestes && <p className="text-red-500 text-sm">{errorTestes.message}</p>}
+        {errorAvaliacoes && <p className="text-red-500 text-sm">{errorAvaliacoes.message}</p>}
       </motion.div>
     )
   }
 
   // Mostrar loading enquanto carrega os dados
   if (loadingColaboradores || loadingTestes || loadingAvaliacoes) {
+    console.log('Dashboard: Mostrando tela de carregamento...', { loadingColaboradores, loadingTestes, loadingAvaliacoes })
     return (
       <motion.div 
         initial={{ opacity: 0, y: 8 }} 
@@ -110,6 +111,8 @@ export default function Dashboard() {
       </motion.div>
     )
   }
+
+  console.log('Dashboard: Renderizando conteúdo', { colaboradores, testes, avaliacoes })
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>

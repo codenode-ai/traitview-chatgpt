@@ -104,7 +104,7 @@ BEGIN
 END;
 $function$;
 
--- Função para marcar resposta como iniciada
+-- Função para marcar resposta como iniciada via token
 CREATE OR REPLACE FUNCTION marcar_resposta_iniciada(token text)
 RETURNS boolean
 LANGUAGE plpgsql
