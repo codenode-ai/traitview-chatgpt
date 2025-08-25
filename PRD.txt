@@ -1,0 +1,353 @@
+📌 Product Requirements Document (PRD)
+TraitView - Versão Simplificada - Single-Tenant
+🔖 1. Visão Geral Simplificada
+Objetivo do Produto Desenvolver uma plataforma web single-tenant para criação e aplicação de testes de personalidade padronizados (escala Likert 1-5). Cada empresa terá sua própria instância dedicada da plataforma.
+Proposta de Valor "Avaliações comportamentais profissionais para sua empresa em minutos, não semanas"
+Público-alvo
+●	Empresas médias (100-500 funcionários)
+●	Departamentos de RH estruturados
+●	Ticket médio: R$ 10.000 - R$ 15.000
+💰 2. Modelo de Negócio Simplificado
+Modelo de Licenciamento Anual
+●	Licença Padrão: R$ 12.000/ano
+○	Até 200 colaboradores
+○	Testes ilimitados (oficiais + customizados)
+○	5 usuários (3 admins + 2 editores)
+○	Editor de testes básico
+○	Suporte por email
+○	Relatórios básicos
+●	Licença Premium: R$ 18.000/ano
+○	Até 500 colaboradores
+○	Testes ilimitados (oficiais + customizados)
+○	15 usuários (10 admins + 5 editores)
+○	Editor de testes avançado + versionamento
+○	Relatórios avançados + gráficos
+○	Suporte prioritário + treinamento
+○	Personalização visual
+Implementação: R$ 2.000 - R$ 3.000 (one-time)
+⚙ 3. Requisitos Funcionais Essenciais
+3.1 Autenticação e Usuários
+●	RF001: Login via email/senha
+●	RF002: Recuperação de senha
+●	RF003: Três perfis: Admin, Editor e Visualizador
+○	Admin: Acesso total, gerencia usuários e configurações
+○	Editor: Cria/edita testes e avaliações, não gerencia usuários
+○	Visualizador: Apenas visualiza relatórios e resultados
+●	RF004: Gestão básica de usuários
+3.2 Gestão de Colaboradores
+●	RF005: CRUD completo de colaboradores
+●	RF006: Importação via CSV
+●	RF007: Campos: nome, email, cargo, departamento
+●	RF008: Busca e filtros básicos
+3.3 Gestão de Testes
+●	RF009: Biblioteca com 10 testes profissionais pré-configurados:
+○	Liderança, Comunicação, Trabalho em Equipe
+○	Adaptabilidade, Orientação a Resultados, Tomada de Decisão
+○	Gestão de Conflitos, Inovação, Inteligência Emocional, Resiliência
+●	RF010: Editor de testes customizados com interface simplificada
+●	RF011: Criação de perguntas com escala Likert (1-5) obrigatória
+●	RF012: Definição de faixas interpretativas (Baixo/Médio/Alto)
+●	RF013: Duplicação de testes existentes para customização
+●	RF014: Preview em tempo real durante edição
+●	RF015: Versionamento básico (histórico de alterações)
+●	RF016: Validação automática (mínimo 10 perguntas por teste)
+3.4 Sistema de Avaliações Simplificado
+●	RF017: Criação de avaliação selecionando testes (pré-criados + customizados)
+●	RF018: Atribuição de colaboradores à avaliação
+●	RF019: Geração de link único para cada colaborador
+●	RF020: Envio automático por email
+3.5 Interface do Colaborador
+●	RF021: Interface responsiva e limpa
+●	RF022: Progresso visual entre testes
+●	RF023: Salvamento automático
+●	RF024: Possibilidade de pausar/retomar
+3.6 Dashboard e Relatórios
+●	RF025: Dashboard com métricas principais
+●	RF026: Relatório individual por colaborador
+●	RF027: Relatório consolidado da equipe
+●	RF028: Exportação em PDF
+●	RF029: Gráficos básicos (radar, barras)
+🛡 4. Requisitos Não Funcionais
+4.1 Performance
+●	Carregamento < 3 segundos
+●	Suporte a 50 usuários simultâneos
+●	99% uptime
+4.2 Segurança
+●	HTTPS obrigatório
+●	Backup diário automatizado
+●	Conformidade LGPD básica
+4.3 Usabilidade
+●	Interface responsiva
+●	Onboarding em < 30 minutos
+●	Taxa de conclusão > 80%
+🛠 5. Stack Técnica Simplificada
+Frontend
+●	React 18 + TypeScript
+●	Tailwind CSS + Shadcn/ui
+●	React Query + Zustand
+●	Recharts para gráficos
+Backend
+●	Supabase (PostgreSQL + Auth + Storage)
+●	Supabase Functions para processamento
+Integrações Mínimas
+●	Resend para emails
+●	Vercel para hosting
+📊 6. Modelo de Dados Simplificado
+-- Usuários da empresa
+CREATE TABLE usuarios (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email VARCHAR(255) UNIQUE NOT NULL,
+  nome VARCHAR(255) NOT NULL,
+  tipo VARCHAR(20) CHECK (tipo IN ('admin', 'editor', 'visualizador')),
+  ativo BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+ 
+-- Colaboradores a serem avaliados
+CREATE TABLE colaboradores (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nome VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  cargo VARCHAR(255),
+  departamento VARCHAR(255),
+  ativo BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+ 
+-- Testes (pré-criados + customizados)
+CREATE TABLE testes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  codigo VARCHAR(50) UNIQUE NOT NULL,
+  nome VARCHAR(255) NOT NULL,
+  descricao TEXT,
+  categoria VARCHAR(100), -- Liderança, Comunicação, etc
+  perguntas JSONB NOT NULL, -- [{id: 1, texto: "...", ordem: 1}]
+  faixas_interpretacao JSONB NOT NULL, -- [{min: 1, max: 2, label: "Baixo", cor: "#red"}]
+  tipo VARCHAR(20) DEFAULT 'customizado', -- 'oficial' ou 'customizado'
+  criado_por UUID REFERENCES usuarios(id),
+  versao INTEGER DEFAULT 1,
+  ativo BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+ 
+-- Histórico de versões dos testes
+CREATE TABLE testes_versoes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  teste_id UUID REFERENCES testes(id),
+  versao INTEGER NOT NULL,
+  alterado_por UUID REFERENCES usuarios(id),
+  alteracoes TEXT, -- Descrição das mudanças
+  snapshot_teste JSONB NOT NULL, -- Backup completo da versão anterior
+  created_at TIMESTAMP DEFAULT NOW()
+);
+ 
+-- Avaliações (conjunto de testes)
+CREATE TABLE avaliacoes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nome VARCHAR(255) NOT NULL,
+  descricao TEXT,
+  criado_por UUID REFERENCES usuarios(id),
+  testes_ids UUID[] NOT NULL,
+  status VARCHAR(20) DEFAULT 'rascunho',
+  created_at TIMESTAMP DEFAULT NOW()
+);
+ 
+-- Respostas dos colaboradores
+CREATE TABLE respostas (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  avaliacao_id UUID REFERENCES avaliacoes(id),
+  colaborador_id UUID REFERENCES colaboradores(id),
+  teste_id UUID REFERENCES testes(id),
+  teste_versao INTEGER NOT NULL, -- Para garantir consistência histórica
+  link_acesso VARCHAR(255) UNIQUE NOT NULL,
+  respostas JSONB, -- [{pergunta_id: 1, resposta: 4, pergunta_texto: "..."}]
+  resultado JSONB, -- {score: 85, faixa: "Alto", interpretacao: "..."}
+  status VARCHAR(20) DEFAULT 'pendente',
+  iniciado_em TIMESTAMP,
+  concluido_em TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+🗓 7. Roadmap MVP - 8 Semanas
+Semanas 1-2: Fundação
+●	Setup Supabase + autenticação
+●	CRUD usuários e colaboradores
+●	Interface básica admin
+Semanas 3-4: Gestão de Testes
+●	Seed dos 10 testes pré-criados
+●	Editor de testes customizados (interface básica)
+●	Sistema de faixas interpretativas
+●	Preview em tempo real
+Semanas 5-6: Avaliações e Interface
+●	Sistema de criação de avaliações
+●	Geração de links únicos
+●	Interface responsiva para colaboradores
+●	Sistema de navegação entre testes
+Semanas 7-8: Relatórios e Versionamento
+●	Dashboard básico
+●	Relatórios individuais e consolidados
+●	Sistema básico de versionamento de testes
+●	Exportação PDF e testes finais
+📈 8. Métricas de Sucesso MVP
+Técnicas
+●	✅ Todas funcionalidades core implementadas
+●	✅ Tempo carregamento < 3s
+●	✅ 99% uptime
+●	✅ Zero bugs críticos
+Produto
+●	✅ Onboarding em < 30 min
+●	✅ Taxa conclusão > 80%
+●	✅ Interface funciona em mobile
+Negócio
+●	✅ 5 empresas piloto validando
+●	✅ 500+ colaboradores avaliados
+●	✅ Feedback positivo > 80%
+🎯 9. Jornadas Simplificadas
+Admin da Empresa
+1.	Login → Dashboard overview
+2.	Cria/customiza testes usando editor intuitivo
+3.	Importa colaboradores via CSV
+4.	Cria avaliação selecionando testes (oficiais + customizados)
+5.	Atribui colaboradores
+6.	Envia links automaticamente
+7.	Acompanha progresso
+8.	Gera relatórios
+Colaborador
+1.	Recebe email com link
+2.	Acessa e vê resumo da avaliação
+3.	Responde testes sequencialmente
+4.	Pode pausar/retomar
+5.	Finaliza e vê confirmação
+🔮 10. Roadmap Pós-MVP
+Versão 2.0 (3 meses)
+●	Editor avançado com templates e categorias
+●	Relatórios comparativos avançados
+●	Integração com sistemas HR
+●	Multi-idioma (EN/ES)
+●	Banco de perguntas colaborativo
+Versão 3.0 (6 meses)
+●	Análises preditivas básicas
+●	Templates de relatório
+●	API para integrações
+●	Mobile app
+💡 11. Principais Simplificações Realizadas
+Removido do Escopo Original:
+●	Multi-tenancy (agora single-tenant)
+●	Sistema de pagamentos integrado (vendas diretas)
+●	~~Editor de testes (biblioteca pré-criada)~~ ✅ Incluído no MVP
+●	Multi-idioma no MVP
+●	Analytics avançados
+●	Sistema de planos
+●	Múltiplas empresas por instância
+Mantido o Valor Core:
+●	Avaliações com múltiplos testes
+●	Editor de testes customizados simplificado
+●	Interface moderna e responsiva
+●	Relatórios automáticos
+●	Facilidade de uso
+●	Insights acionáveis
+🎲 12. Estratégia de Validação
+Pilotos Gratuitos (3 meses)
+●	5 empresas selecionadas
+●	Implementação sem custo
+●	Feedback intensivo
+●	Casos de uso documentados
+Go-to-Market
+●	Vendas diretas B2B
+●	Foco em empresas 100-500 funcionários
+●	Demonstrações personalizadas
+●	Contratos anuais
+Próximos Passos
+1.	Validar PRD com 3 potenciais clientes
+2.	Criar protótipo das telas principais
+3.	Setup da infraestrutura
+4.	Início desenvolvimento (Semana 1)
+________________________________________
+Aprovação: [Product Owner]
+ Data: [Data]
+ Versão: 1.0 Simplificada
+ Próxima Revisão: Pós-MVP
+ 
+
+
+# Plano de
+  Refatoração do Traitview - Versão Single-Tenant
+
+  1. Estrutura de Pastas e Arquitetura- [ ] Reorganizar estrutura de pastas conforme o PRD- [ ] Criar 
+  diretórios: features/, providers/, utils/
+   - [ ] Separar funcionalidades em módulos: auth/, collaborators/, tests/, assessments/, responses/,
+     reports/## 2. Modelo de Dados e Supabase
+   - [ ] Atualizar supabaseClient.ts com os tipos corretos do PRD
+   - [ ] Criar tabelas conforme o modelo do PRD:  - [ ] usuarios - Usuários da empresa
+     - [ ] colaboradores - Colaboradores a serem avaliados - [ ] testes - Testes (pré-criados +
+       customizados)
+     - [ ] testes_versoes - Histórico de versões dos testes - [ ] avaliacoes - Avaliações (conjunto de
+       testes)
+     - [ ] respostas - Respostas dos colaboradores
+   - [ ] Criar relacionamentos e constraints corretos
+
+  3. Sistema de Autenticação
+   - [ ] Configurar Supabase Auth
+   - [ ] Implementar login/logout
+   - [ ] Recuperação de senha- [ ] Sistema de permissões (Admin, Editor, Visualizador)
+   - [ ] Proteção de rotas baseada em perfis
+
+  ##4. Gestão de Usuários
+   - [ ] CRUD de usuários com validação
+   - [ ] Interface de gestão de usuários
+   - [ ] Atribuição de perfis## 5. Gestão de Colaboradores
+   - [ ] CRUD completo de colaboradores- [ ] Importação via CSV com validação
+   - [ ] Busca e filtros básicos
+   - [ ] Interface de lista com paginação
+
+  ##6. Gestão de Testes
+   - [ ] Biblioteca com 10 testes pré-configurados- [ ] Editor de testes customizados
+   - [ ] Sistema de faixas interpretativas
+   - [ ] Preview em tempo real- [ ] Versionamento básico
+   - [ ] Validação automática (mínimo 10 perguntas)
+
+  ##7. Sistema de Avaliações
+   - [ ] Criação de avaliações selecionando testes
+   - [ ] Atribuição de colaboradores
+   - [ ] Geração de links únicos para cada colaborador
+   - [ ] Sistema de expiração de links## 8. Sistema de Tokens e Links (SEU FLUXO ESPECÍFICO)
+   - [ ] Criar tabela respostas com campo link_acesso UNIQUE
+   - [ ] Implementar geração de tokens aleatórios
+   - [ ] Criar RPC para validar token e resolver dados do teste
+   - [ ] Criar RPC para salvar respostas validando token
+   - [ ] Implementar marcação de link como concluído## 9. Interface do Colaborador
+   - [ ] Página pública para responder avaliações- [ ] Interface responsiva e limpa
+   - [ ] Progresso visual entre testes
+   - [ ] Salvamento automático- [ ] Possibilidade de pausar/retomar## 10. Dashboard e Relatórios
+   - [ ] Dashboard com métricas principais
+   - [ ] Relatórios individuais por colaborador
+   - [ ] Relatórios consolidados da equipe- [ ] Exportação em PDF
+   - [ ] Gráficos básicos (radar, barras)
+
+  ##11. Integrações
+   - [ ] Configurar Resend para envio de emails- [ ] Implementar envio automático de links
+   - [ ] Configurar exportação PDF## 12. Melhorias de Performance e Segurança
+   - [ ] Otimização de carregamento de dados
+   - [ ] Implementação de cache
+   - [ ] Conformidade LGPD básica
+   - [ ] Backup diário automatizado## 13. Testes e Validação- [ ] Testes unitários para funcionalidades
+     principais
+   - [ ] Testes de integração com Supabase
+   - [ ] Validação com 5 empresas piloto
+   - [ ] Métricas de sucesso do MVP
+
+  Priorização Recomendada:
+
+  Fase 1 (Semanas1-2): Fundação1. Estrutura de pastas e arquitetura
+   2. Modelo de dados e Supabase3. Sistema de autenticação4. Gestão de usuários
+
+  Fase2 (Semanas 3-4): Gestão de Conteúdo
+   5. Gestão de colaboradores
+   6. Gestão de testes7. Biblioteca de testes pré-configurados
+
+  Fase 3 (Semanas5-6): Avaliações e Links
+   8. Sistema de avaliações
+   9. Sistema de tokens e links (SEU FLUXO ESPECÍFICO) ⭐
+   10. Interface do colaborador### Fase 4 (Semanas7-8): Relatórios e Finalização
+   11. Dashboard e relatórios
+   12. Integrações13. Testes e validação

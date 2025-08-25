@@ -9,6 +9,12 @@ interface DBState {
   evaluations: Evaluation[];
   answers: Answer[];
   seed: () => void;
+  clear: () => void; // Nova função para limpar os dados
+
+  // Funções para atualizar o estado com dados do Supabase
+  setCollaborators: (collaborators: Collaborator[]) => void;
+  setTests: (tests: Test[]) => void;
+  setEvaluations: (evaluations: Evaluation[]) => void;
 
   addCollaborator: (c: Omit<Collaborator, "id">) => void;
   removeCollaborator: (id: string) => void;
@@ -22,7 +28,7 @@ interface DBState {
   findEvaluationByToken: (token: string) => Evaluation | undefined;
 }
 
-const initial: Omit<DBState, "seed" | "addCollaborator" | "removeCollaborator" | "addTest" | "updateTest" | "createEvaluation" | "upsertAnswer" | "completeLink" | "findEvaluationByToken"> = {
+const initial: Omit<DBState, "seed" | "clear" | "setCollaborators" | "setTests" | "setEvaluations" | "addCollaborator" | "removeCollaborator" | "addTest" | "updateTest" | "createEvaluation" | "upsertAnswer" | "completeLink" | "findEvaluationByToken"> = {
   collaborators: [],
   tests: [],
   evaluations: [],
@@ -34,6 +40,9 @@ export const useDB = create<DBState>()(
     (set, get) => ({
       ...initial,
       seed: () => {
+        // Não carregar dados mockados se estiver usando Supabase
+        if (import.meta.env.VITE_DATA_SOURCE === "supabase") return;
+        
         if (get().tests.length > 0 || get().collaborators.length > 0) return;
         const c1 = { id: uid("c_"), name: "Ana Lima", email: "ana@empresa.com" };
         const c2 = { id: uid("c_"), name: "Bruno Souza", email: "bruno@empresa.com" };
@@ -76,6 +85,14 @@ export const useDB = create<DBState>()(
 
         set({ collaborators: [c1, c2, c3], tests: [t1, t2] });
       },
+
+      // Nova função para limpar os dados
+      clear: () => set({ collaborators: [], tests: [], evaluations: [], answers: [] }),
+
+      // Funções para atualizar o estado com dados do Supabase
+      setCollaborators: (collaborators) => set({ collaborators }),
+      setTests: (tests) => set({ tests }),
+      setEvaluations: (evaluations) => set({ evaluations }),
 
       addCollaborator: (c) => set((s) => ({ collaborators: [...s.collaborators, { id: uid("c_"), ...c }] })),
       removeCollaborator: (id) => set((s) => ({ collaborators: s.collaborators.filter(x => x.id !== id) })),

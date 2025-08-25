@@ -1,49 +1,71 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useDB } from "@/stores/db";
-import { useMemo, useState } from "react";
-import type { Answer } from "@/types";
+import { useState } from "react";
+import { useAvaliacaoPublica } from "@/features/responses/useAvaliacaoPublica";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
 export default function AvaliacaoPublica() {
   const { token } = useParams();
   const navigate = useNavigate();
-  const db = useDB();
-
-  const evaluation = useMemo(() => db.findEvaluationByToken(token || ""), [db, token]);
-  const linkInfo = useMemo(() => evaluation?.links.find(l => l.token === token), [evaluation, token]);
-
+  
   const [currentIdx, setCurrentIdx] = useState(0);
-  const tests = useMemo(() => evaluation ? evaluation.testIds.map(tid => db.tests.find(t => t.id === tid)).filter(Boolean) : [], [evaluation, db.tests]);
-  const current = tests[currentIdx];
+  const [answers, setAnswers] = useState<Record<number, number>>({}); // questionId -> value
 
-  const [answers, setAnswers] = useState<Record<string, number>>({}); // questionId -> value
+  // Usar o hook personalizado para gerenciar a avaliação
+  const { 
+    respostaData, 
+    isLoading, 
+    error, 
+    salvarRespostas, 
+    isSalvando 
+  } = useAvaliacaoPublica(token);
 
-  if (!evaluation || !linkInfo) {
+  if (isLoading) {
+    return <div className="p-10 text-center">Carregando...</div>;
+  }
+
+  if (error) {
+    return <div className="p-10 text-center"><h1 className="text-2xl font-bold mb-2">Erro</h1><p>{error}</p></div>;
+  }
+
+  if (!respostaData) {
     return <div className="p-10 text-center"><h1 className="text-2xl font-bold mb-2">Link inválido</h1><p>Esta avaliação não foi encontrada.</p></div>;
   }
 
-  function setValue(qid: string, val: number) {
+  const teste = respostaData;
+  const perguntas = teste?.teste_perguntas || [];
+  const current = perguntas[currentIdx];
+
+  function setValue(qid: number, val: number) {
     setAnswers(a => ({ ...a, [qid]: val }));
   }
 
-  function submitTest() {
-    if (!current) return;
-    const payload: Answer = {
-      evaluationId: evaluation.id,
-      collaboratorId: linkInfo.collaboratorId,
-      testId: current.id!,
-      answers: current.questions.map(q => ({ questionId: q.id, value: answers[q.id] ?? 3 }))
-    };
-    db.upsertAnswer(payload);
+  async function submitTest() {
+    if (!teste || !token) return;
 
-    if (currentIdx + 1 < tests.length) {
-      setCurrentIdx(idx => idx + 1);
-      setAnswers({});
-    } else {
-      db.completeLink(evaluation.id, linkInfo.collaboratorId);
-      alert("Obrigado! Respostas registradas.");
-      navigate("/");
+    try {
+      // Se houver mais perguntas, avançar para a próxima
+      if (currentIdx + 1 < perguntas.length) {
+        setCurrentIdx(idx => idx + 1);
+        setAnswers({});
+      } else {
+        // Preparar as respostas no formato esperado
+        const respostasFormatadas = perguntas.map((q: any) => ({
+          pergunta_id: q.id,
+          resposta: answers[q.id] ?? 3, // Valor padrão 3 (neutro)
+          pergunta_texto: q.texto
+        }));
+
+        // Salvar respostas validando o token
+        salvarRespostas(respostasFormatadas);
+        
+        // Avaliação concluída
+        alert("Obrigado! Respostas registradas.");
+        navigate("/");
+      }
+    } catch (err: any) {
+      console.error("Erro ao salvar respostas:", err);
+      alert("Erro ao salvar respostas. Verifique o console para mais detalhes.");
     }
   }
 
@@ -51,24 +73,31 @@ export default function AvaliacaoPublica() {
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
       <div className="max-w-3xl mx-auto p-6">
         <div className="mb-4">
-          <div className="text-xs text-muted-foreground">Avaliação:</div>
-          <div className="text-lg font-semibold">{evaluation.name}</div>
-          <div className="text-xs badge mt-1">Progresso: {currentIdx+1}/{tests.length}</div>
+          <div className="text-xs text-muted-foreground">Avaliação para:</div>
+          <div className="text-lg font-semibold">{respostaData.colaborador_nome || "Colaborador"}</div>
+          <div className="text-xs badge mt-1">Progresso: {currentIdx + 1}/{perguntas.length}</div>
         </div>
 
-        {current && (
+        {teste && (
           <div className="grid gap-4">
-            <h2 className="text-xl font-semibold">{current.name}</h2>
-            <p className="text-sm text-muted-foreground">{current.description}</p>
+            <h2 className="text-xl font-semibold">{teste.teste_nome}</h2>
+            <p className="text-sm text-muted-foreground">{teste.teste_descricao}</p>
 
             <div className="grid gap-3">
-              {current.questions.map((q, i) => (
+              {perguntas.map((q: any, i: number) => (
                 <div key={q.id} className="rounded-xl border p-3 hover-card">
-                  <div className="font-medium mb-2">{i+1}. {q.text}</div>
+                  <div className="font-medium mb-2">{i + 1}. {q.texto}</div>
                   <div className="flex items-center gap-2">
-                    {[1,2,3,4,5].map(v => (
+                    {[1, 2, 3, 4, 5].map(v => (
                       <label key={v} className={"flex items-center gap-1 px-2 py-1 rounded-lg border cursor-pointer " + (answers[q.id] === v ? "bg-primary" : "bg-white")}>
-                        <input type="radio" name={q.id} checked={answers[q.id] === v} onChange={()=>setValue(q.id, v)} className="hidden"/>
+                        <input 
+                          type="radio" 
+                          name={`question-${q.id}`} 
+                          checked={answers[q.id] === v} 
+                          onChange={() => setValue(q.id, v)} 
+                          className="hidden"
+                          disabled={isSalvando}
+                        />
                         <span>{v}</span>
                       </label>
                     ))}
@@ -79,7 +108,12 @@ export default function AvaliacaoPublica() {
             </div>
 
             <div className="pt-2">
-              <Button onClick={submitTest}>Salvar e continuar</Button>
+              <Button 
+                onClick={submitTest} 
+                disabled={isSalvando}
+              >
+                {isSalvando ? "Salvando..." : currentIdx + 1 < perguntas.length ? "Salvar e continuar" : "Concluir avaliação"}
+              </Button>
             </div>
           </div>
         )}

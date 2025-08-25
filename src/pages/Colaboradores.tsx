@@ -1,7 +1,8 @@
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useDB } from "@/stores/db";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { dataService } from '@/lib/dataService';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -15,16 +16,54 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export default function Colaboradores() {
+  const queryClient = useQueryClient();
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema)
   });
-  const collaborators = useDB(s => s.collaborators);
-  const addCollaborator = useDB(s => s.addCollaborator);
-  const removeCollaborator = useDB(s => s.removeCollaborator);
+
+  // Buscar colaboradores do Supabase
+  const { data: collaborators = [], isLoading } = useQuery({
+    queryKey: ['colaboradores'],
+    queryFn: () => dataService.colaboradores.getAll()
+  });
+
+  // Mutations para adicionar e remover colaboradores
+  const addCollaboratorMutation = useMutation({
+    mutationFn: (data: Omit<FormData, 'id' | 'created_at' | 'ativo'>) => 
+      dataService.colaboradores.create({
+        ...data,
+        cargo: null,
+        departamento: null,
+        ativo: true
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['colaboradores'] });
+      reset();
+    }
+  });
+
+  const removeCollaboratorMutation = useMutation({
+    mutationFn: (id: string) => dataService.colaboradores.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['colaboradores'] });
+    }
+  });
 
   function onSubmit(data: FormData) {
-    addCollaborator(data);
-    reset();
+    addCollaboratorMutation.mutate(data);
+  }
+
+  if (isLoading) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 8 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.25 }}
+        className="p-10 text-center"
+      >
+        Carregando colaboradores...
+      </motion.div>
+    );
   }
 
   return (
@@ -45,10 +84,16 @@ export default function Colaboradores() {
                 <TBody>
                   {collaborators.map(c => (
                     <TR key={c.id}>
-                      <TD>{c.name}</TD>
+                      <TD>{c.nome}</TD>
                       <TD>{c.email}</TD>
                       <TD>
-                        <Button variant="outline" onClick={() => removeCollaborator(c.id)}>Remover</Button>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => removeCollaboratorMutation.mutate(c.id)}
+                          disabled={removeCollaboratorMutation.isPending}
+                        >
+                          {removeCollaboratorMutation.isPending ? 'Removendo...' : 'Remover'}
+                        </Button>
                       </TD>
                     </TR>
                   ))}
@@ -73,7 +118,13 @@ export default function Colaboradores() {
                 <Input placeholder="ana@empresa.com" {...register("email")} className="text-black" />
                 {errors.email && <span className="text-red-600 text-xs">{errors.email.message}</span>}
               </div>
-              <Button type="submit" className="mt-2">Adicionar</Button>
+              <Button 
+                type="submit" 
+                className="mt-2"
+                disabled={addCollaboratorMutation.isPending}
+              >
+                {addCollaboratorMutation.isPending ? 'Adicionando...' : 'Adicionar'}
+              </Button>
             </form>
           </div>
         </div>

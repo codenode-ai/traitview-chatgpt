@@ -1,18 +1,74 @@
-import { useDB } from "@/stores/db";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from "recharts";
-import { motion } from "framer-motion";
+import { useQuery } from '@tanstack/react-query'
+import { dataService } from '@/lib/dataService'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from "recharts"
+import { motion } from "framer-motion"
 
 export default function Dashboard() {
-  const collaborators = useDB(s => s.collaborators);
-  const tests = useDB(s => s.tests);
-  const evaluations = useDB(s => s.evaluations);
+  // Buscar dados do Supabase
+  const { 
+    data: colaboradores = [], 
+    isLoading: loadingColaboradores,
+    error: errorColaboradores
+  } = useQuery({
+    queryKey: ['colaboradores'],
+    queryFn: async () => {
+      console.log('Buscando colaboradores...')
+      try {
+        const result = await dataService.colaboradores.getAll()
+        console.log('Colaboradores encontrados:', result)
+        return result
+      } catch (error) {
+        console.error('Erro ao buscar colaboradores:', error)
+        throw error
+      }
+    }
+  })
 
+  const { 
+    data: testes = [], 
+    isLoading: loadingTestes,
+    error: errorTestes
+  } = useQuery({
+    queryKey: ['testes'],
+    queryFn: async () => {
+      console.log('Buscando testes...')
+      try {
+        const result = await dataService.testes.getAll()
+        console.log('Testes encontrados:', result)
+        return result
+      } catch (error) {
+        console.error('Erro ao buscar testes:', error)
+        throw error
+      }
+    }
+  })
+
+  const { 
+    data: avaliacoes = [], 
+    isLoading: loadingAvaliacoes,
+    error: errorAvaliacoes
+  } = useQuery({
+    queryKey: ['avaliacoes'],
+    queryFn: async () => {
+      console.log('Buscando avaliações...')
+      try {
+        const result = await dataService.avaliacoes.getAll()
+        console.log('Avaliações encontradas:', result)
+        return result
+      } catch (error) {
+        console.error('Erro ao buscar avaliações:', error)
+        throw error
+      }
+    }
+  })
+
+  // Dados para os gráficos
   const chart1 = [
-    { name: "Colabs", value: collaborators.length },
-    { name: "Testes", value: tests.length },
-    { name: "Avaliações", value: evaluations.length }
-  ];
+    { name: "Colabs", value: colaboradores.length },
+    { name: "Testes", value: testes.length },
+    { name: "Avaliações", value: avaliacoes.length }
+  ]
 
   const radarData = [
     { k: "Confiabilidade", v: 4.1 },
@@ -20,7 +76,40 @@ export default function Dashboard() {
     { k: "Colaboração", v: 3.9 },
     { k: "Documentação", v: 3.2 },
     { k: "Autonomia", v: 4.3 }
-  ];
+  ]
+
+  // Verificar se há erros
+  if (errorColaboradores || errorTestes || errorAvaliacoes) {
+    console.error('Erros encontrados:', { errorColaboradores, errorTestes, errorAvaliacoes })
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 8 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.25 }}
+        className="p-10 text-center"
+      >
+        <h1 className="text-2xl font-bold mb-2">Erro ao carregar dashboard</h1>
+        <p>Verifique o console para mais detalhes.</p>
+        {errorColaboradores && <p className="text-red-500">Erro colaboradores: {errorColaboradores.message}</p>}
+        {errorTestes && <p className="text-red-500">Erro testes: {errorTestes.message}</p>}
+        {errorAvaliacoes && <p className="text-red-500">Erro avaliações: {errorAvaliacoes.message}</p>}
+      </motion.div>
+    )
+  }
+
+  // Mostrar loading enquanto carrega os dados
+  if (loadingColaboradores || loadingTestes || loadingAvaliacoes) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 8 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.25 }}
+        className="p-10 text-center"
+      >
+        Carregando dashboard...
+      </motion.div>
+    )
+  }
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
@@ -64,5 +153,5 @@ export default function Dashboard() {
         </Card>
       </div>
     </motion.div>
-  );
+  )
 }
