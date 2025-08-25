@@ -1,10 +1,11 @@
-import { useDB } from "@/stores/db";
-import { Table, THead, TBody, TR, TH, TD } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Table, THead, TBody, TR, TH, TD } from "@/components/ui/table";
 import { motion } from "framer-motion";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useRef } from "react";
+import { useQuery } from '@tanstack/react-query';
+import { dataService } from '@/lib/dataService';
 
 function average(values: number[]) {
   if (values.length === 0) return 0;
@@ -12,19 +13,59 @@ function average(values: number[]) {
 }
 
 export default function Relatorios() {
-  const answers = useDB(s => s.answers);
-  const tests = useDB(s => s.tests);
-  const evaluations = useDB(s => s.evaluations);
   const ref = useRef<HTMLDivElement>(null);
 
-  const rows = answers.map(ans => {
-    const test = tests.find(t => t.id === ans.testId);
-    const evalName = evaluations.find(e => e.id === ans.evaluationId)?.name ?? "—";
-    const score = average(ans.answers.map(a => a.value));
+  // Buscar dados do Supabase
+  const { data: respostas = [], isLoading: loadingRespostas } = useQuery({
+    queryKey: ['respostas'],
+    queryFn: () => dataService.respostas.getAll()
+  });
+
+  const { data: testes = [], isLoading: loadingTestes } = useQuery({
+    queryKey: ['testes'],
+    queryFn: () => dataService.testes.getAll()
+  });
+
+  const { data: avaliacoes = [], isLoading: loadingAvaliacoes } = useQuery({
+    queryKey: ['avaliacoes'],
+    queryFn: () => dataService.avaliacoes.getAll()
+  });
+
+  const { data: colaboradores = [], isLoading: loadingColaboradores } = useQuery({
+    queryKey: ['colaboradores'],
+    queryFn: () => dataService.colaboradores.getAll()
+  });
+
+  // Mostrar loading enquanto carrega os dados
+  if (loadingRespostas || loadingTestes || loadingAvaliacoes || loadingColaboradores) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 8 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.25 }}
+        className="p-10 text-center"
+      >
+        Carregando relatórios...
+      </motion.div>
+    );
+  }
+
+  // Processar os dados para exibição
+  const rows = respostas.map(resposta => {
+    const teste = testes.find(t => t.id === resposta.teste_id);
+    const avaliacao = avaliacoes.find(a => a.id === resposta.avaliacao_id);
+    const colaborador = colaboradores.find(c => c.id === resposta.colaborador_id);
+    
+    // Calcular o score médio
+    let score = 0;
+    if (resposta.respostas && Array.isArray(resposta.respostas)) {
+      score = average(resposta.respostas.map(r => r.resposta));
+    }
+    
     return {
-      evalName,
-      testName: test?.name ?? "—",
-      collaboratorId: ans.collaboratorId.slice(0,8) + "…",
+      avaliacaoNome: avaliacao?.nome || "—",
+      testeNome: teste?.nome || "—",
+      colaboradorNome: colaborador?.nome || resposta.colaborador_id.slice(0,8) + "…",
       score: score.toFixed(2)
     }
   });
@@ -49,7 +90,7 @@ export default function Relatorios() {
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Relatórios</h2>
-        <Button onClick={exportPDF}>Exportar PDF</Button>
+        <Button onClick={exportPDF} disabled={rows.length === 0}>Exportar PDF</Button>
       </div>
 
       <div ref={ref} className="overflow-auto rounded-xl border bg-white p-2">
@@ -65,9 +106,9 @@ export default function Relatorios() {
           <TBody>
             {rows.map((r, i) => (
               <TR key={i}>
-                <TD>{r.evalName}</TD>
-                <TD>{r.testName}</TD>
-                <TD>{r.collaboratorId}</TD>
+                <TD>{r.avaliacaoNome}</TD>
+                <TD>{r.testeNome}</TD>
+                <TD>{r.colaboradorNome}</TD>
                 <TD>{r.score}</TD>
               </TR>
             ))}

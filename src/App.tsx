@@ -1,5 +1,6 @@
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
+import { useAuthContext } from "@/providers/AuthProvider";
 import AppLayout from "@/components/layout/AppLayout";
 import Dashboard from "@/pages/Dashboard";
 import Colaboradores from "@/pages/Colaboradores";
@@ -8,49 +9,57 @@ import Avaliacoes from "@/pages/Avaliacoes";
 import Relatorios from "@/pages/Relatorios";
 import AvaliacaoPublica from "@/pages/public/AvaliacaoPublica";
 import NotFound from "@/pages/NotFound";
-import { useDB } from "@/stores/db";
-import { useSupabaseData } from "@/hooks/useSupabaseData";
-
-// TODO: Obter o ID da organização de alguma forma (por exemplo, do contexto de autenticação)
-const ORG_ID = "11111111-1111-1111-1111-111111111111"; // ID da organização demo
+import LoginForm from "@/features/auth/LoginForm";
+import { seedTestesOficiais } from "@/features/tests/seedTestesOficiais";
 
 export default function App() {
-  const navigate = useNavigate();
-  const { seed, clear } = useDB();
-  const { loading, error } = useSupabaseData(ORG_ID);
+  const { state } = useAuthContext();
+  console.log('App.tsx: Renderizando', { user: state.user, loading: state.loading })
 
+  // Verificar se usuário está autenticado
+  const isAuthenticated = !!state.user;
+  const loading = state.loading;
+
+  // Semear testes oficiais quando o app carrega
   useEffect(() => {
-    // Limpar dados do Zustand se estiver usando Supabase
-    if (import.meta.env.VITE_DATA_SOURCE === "supabase") {
-      clear();
-    } else {
-      // Inicializar o estado da aplicação com dados mockados apenas se estiver usando fonte local
-      seed();
-    }
-  }, [seed, clear]);
+    console.log('App.tsx: useEffect - Iniciando seed de testes oficiais')
+    seedTestesOficiais();
+  }, []);
 
-  // Redirecionar para a página inicial se houver erro ao buscar dados do Supabase
-  useEffect(() => {
-    if (error) {
-      console.error("Erro ao carregar dados do Supabase:", error);
-      // TODO: Mostrar mensagem de erro para o usuário
-    }
-  }, [error, navigate]);
-
-  if (loading && import.meta.env.VITE_DATA_SOURCE === "supabase") {
-    return <div className="p-10 text-center">Carregando dados...</div>;
+  if (loading) {
+    console.log('App.tsx: Mostrando tela de carregamento')
+    return <div className="p-10 text-center">Carregando...</div>;
   }
 
+  // Se não estiver autenticado e não estiver na página pública de avaliação, mostrar login
+  const isPublicRoute = location.pathname.startsWith("/avaliacao/");
+  
+  if (!isAuthenticated && !isPublicRoute && location.pathname !== "/login") {
+    console.log('App.tsx: Usuário não autenticado, redirecionando para login')
+    return <LoginForm />;
+  }
+
+  console.log('App.tsx: Renderizando rotas protegidas')
   return (
     <Routes>
-      <Route element={<AppLayout />}>
-        <Route index element={<Dashboard />} />
-        <Route path="colaboradores" element={<Colaboradores />} />
-        <Route path="testes" element={<Testes />} />
-        <Route path="avaliacoes" element={<Avaliacoes />} />
-        <Route path="relatorios" element={<Relatorios />} />
-      </Route>
+      {/* Rotas públicas */}
       <Route path="/avaliacao/:token" element={<AvaliacaoPublica />} />
+      
+      {/* Login */}
+      <Route path="/login" element={<LoginForm />} />
+      
+      {/* Rotas protegidas */}
+      {isAuthenticated ? (
+        <Route element={<AppLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="colaboradores" element={<Colaboradores />} />
+          <Route path="testes" element={<Testes />} />
+          <Route path="avaliacoes" element={<Avaliacoes />} />
+          <Route path="relatorios" element={<Relatorios />} />
+        </Route>
+      ) : null}
+      
+      {/* 404 */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

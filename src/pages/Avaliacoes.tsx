@@ -1,55 +1,97 @@
-import { useDB } from "@/stores/db";
 import { Button } from "@/components/ui/button";
 import { Table, THead, TBody, TR, TH, TD } from "@/components/ui/table";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { getSource } from "@/data";
-
-// TODO: Obter o ID da organização de alguma forma (por exemplo, do contexto de autenticação)
-const ORG_ID = "11111111-1111-1111-1111-111111111111"; // ID da organização demo
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { dataService } from '@/lib/dataService';
+import { uid } from '@/lib/utils';
 
 export default function Avaliacoes() {
-  const collaborators = useDB(s => s.collaborators);
-  const tests = useDB(s => s.tests);
-  const evaluations = useDB(s => s.evaluations);
-  const createEvaluation = useDB(s => s.createEvaluation);
-
+  const queryClient = useQueryClient();
   const [name, setName] = useState("");
   const [selectedTests, setSelectedTests] = useState<string[]>([]);
   const [selectedCols, setSelectedCols] = useState<string[]>([]);
+
+  // Buscar dados do Supabase
+  const { data: collaborators = [], isLoading: loadingCollaborators } = useQuery({
+    queryKey: ['colaboradores'],
+    queryFn: () => dataService.colaboradores.getAll()
+  });
+
+  const { data: tests = [], isLoading: loadingTests } = useQuery({
+    queryKey: ['testes'],
+    queryFn: () => dataService.testes.getAll()
+  });
+
+  const { data: evaluations = [], isLoading: loadingEvaluations } = useQuery({
+    queryKey: ['avaliacoes'],
+    queryFn: () => dataService.avaliacoes.getAll()
+  });
+
+  // Mutation para criar avaliação
+  const createEvaluationMutation = useMutation({
+    mutationFn: async () => {
+      if (!name || selectedTests.length === 0 || selectedCols.length === 0) {
+        throw new Error("Informe nome, ao menos 1 teste e 1 colaborador.");
+      }
+
+      // Criar a avaliação
+      const avaliacao = await dataService.avaliacoes.create({
+        nome: name,
+        descricao: null,
+        criado_por: "usuário-logado-id", // TODO: Obter ID do usuário logado
+        testes_ids: selectedTests,
+        status: "rascunho"
+      });
+
+      // Criar respostas para cada colaborador
+      const respostasPromises = selectedCols.map(colaboradorId => {
+        return selectedTests.map(testeId => {
+          return dataService.respostas.create({
+            avaliacao_id: avaliacao.id,
+            colaborador_id: colaboradorId,
+            teste_id: testeId,
+            teste_versao: 1, // TODO: Obter versão correta do teste
+            respostas: null,
+            resultado: null
+          });
+        });
+      });
+
+      // Esperar todas as promessas
+      await Promise.all(respostasPromises.flat());
+
+      return avaliacao;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['avaliacoes'] });
+      setName("");
+      setSelectedTests([]);
+      setSelectedCols([]);
+      alert("Avaliação criada com sucesso!");
+    },
+    onError: (error: any) => {
+      console.error("Erro ao criar avaliação:", error);
+      alert(error.message || "Erro ao criar avaliação. Verifique o console para mais detalhes.");
+    }
+  });
 
   function toggle(list: string[], id: string, setter: (v: string[]) => void) {
     setter(list.includes(id) ? list.filter(x => x !== id) : [...list, id]);
   }
 
-  async function create() {
-    if (!name || selectedTests.length === 0 || selectedCols.length === 0) {
-      alert("Informe nome, ao menos 1 teste e 1 colaborador.");
-      return;
-    }
-
-    // Se estiver usando Supabase, chamar a função createEvaluation do Supabase
-    if (import.meta.env.VITE_DATA_SOURCE === "supabase") {
-      try {
-        const source = await getSource();
-        const id = await source.createEvaluation(name, selectedTests, selectedCols);
-        alert("Avaliação criada com sucesso!");
-        setName("");
-        setSelectedTests([]);
-        setSelectedCols([]);
-      } catch (error) {
-        console.error("Erro ao criar avaliação:", error);
-        alert("Erro ao criar avaliação. Verifique o console para mais detalhes.");
-      }
-    } else {
-      // Comportamento original para fonte local
-      const id = createEvaluation(name, selectedTests, selectedCols);
-      const ev = evaluations.find(e => e.id === id);
-      if (ev) alert("Avaliação criada! Links gerados na tabela abaixo.");
-      setName("");
-      setSelectedTests([]);
-      setSelectedCols([]);
-    }
+  // Mostrar loading enquanto carrega os dados
+  if (loadingCollaborators || loadingTests || loadingEvaluations) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 8 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.25 }}
+        className="p-10 text-center"
+      >
+        Carregando avaliações...
+      </motion.div>
+    );
   }
 
   return (
@@ -59,14 +101,23 @@ export default function Avaliacoes() {
           <div className="md:col-span-1">
             <h3 className="font-semibold mb-2">Nova avaliação</h3>
             <div className="grid gap-2">
-              <input className="input-like" placeholder="Nome da avaliação" value={name} onChange={(e)=>setName(e.target.value)} />
+              <input 
+                className="input-like" 
+                placeholder="Nome da avaliação" 
+                value={name} 
+                onChange={(e)=>setName(e.target.value)} 
+              />
               <div>
                 <div className="text-sm font-medium mb-1">Testes</div>
                 <div className="grid gap-1 max-h-40 overflow-auto border rounded-xl p-2">
                   {tests.map(t => (
                     <label key={t.id} className="flex items-center gap-2">
-                      <input type="checkbox" checked={selectedTests.includes(t.id)} onChange={()=>toggle(selectedTests, t.id, setSelectedTests)} />
-                      <span>{t.name}</span>
+                      <input 
+                        type="checkbox" 
+                        checked={selectedTests.includes(t.id)} 
+                        onChange={()=>toggle(selectedTests, t.id, setSelectedTests)} 
+                      />
+                      <span>{t.nome}</span>
                     </label>
                   ))}
                   {tests.length === 0 && <div className="text-xs text-muted-foreground">Nenhum teste.</div>}
@@ -77,14 +128,23 @@ export default function Avaliacoes() {
                 <div className="grid gap-1 max-h-40 overflow-auto border rounded-xl p-2">
                   {collaborators.map(c => (
                     <label key={c.id} className="flex items-center gap-2">
-                      <input type="checkbox" checked={selectedCols.includes(c.id)} onChange={()=>toggle(selectedCols, c.id, setSelectedCols)} />
-                      <span>{c.name} <span className="text-xs text-muted-foreground">&lt;{c.email}&gt;</span></span>
+                      <input 
+                        type="checkbox" 
+                        checked={selectedCols.includes(c.id)} 
+                        onChange={()=>toggle(selectedCols, c.id, setSelectedCols)} 
+                      />
+                      <span>{c.nome} <span className="text-xs text-muted-foreground">&lt;{c.email}&gt;</span></span>
                     </label>
                   ))}
                   {collaborators.length === 0 && <div className="text-xs text-muted-foreground">Nenhum colaborador.</div>}
                 </div>
               </div>
-              <Button onClick={create}>Criar avaliação</Button>
+              <Button 
+                onClick={() => createEvaluationMutation.mutate()}
+                disabled={createEvaluationMutation.isPending}
+              >
+                {createEvaluationMutation.isPending ? 'Criando...' : 'Criar avaliação'}
+              </Button>
             </div>
           </div>
 
@@ -96,24 +156,25 @@ export default function Avaliacoes() {
                   <TR>
                     <TH>Nome</TH>
                     <TH>Testes</TH>
-                    <TH>Gerados</TH>
+                    <TH>Status</TH>
                     <TH>Links</TH>
                   </TR>
                 </THead>
                 <TBody>
                   {evaluations.map(ev => (
                     <TR key={ev.id}>
-                      <TD>{ev.name}</TD>
-                      <TD>{ev.testIds.length}</TD>
-                      <TD>{ev.links.length}</TD>
+                      <TD>{ev.nome}</TD>
+                      <TD>{ev.testes_ids?.length || 0}</TD>
+                      <TD>
+                        <span className={`badge ${ev.status === 'rascunho' ? 'bg-yellow-500' : ev.status === 'enviada' ? 'bg-blue-500' : 'bg-green-500'}`}>
+                          {ev.status}
+                        </span>
+                      </TD>
                       <TD className="space-y-1">
-                        {ev.links.map(l => (
-                          <div key={l.token} className="flex items-center gap-2">
-                            <span className="badge">{l.status}</span>
-                            <Button variant="outline" onClick={()=>window.open(`/avaliacao/${l.token}`, "_blank")}>Abrir</Button>
-                            <code className="text-xs">{location.origin}/avaliacao/{l.token}</code>
-                          </div>
-                        ))}
+                        {/* TODO: Implementar geração de links */}
+                        <div className="text-xs text-muted-foreground">
+                          Links serão gerados após criação
+                        </div>
                       </TD>
                     </TR>
                   ))}

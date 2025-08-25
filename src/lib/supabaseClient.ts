@@ -1,59 +1,73 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Tipos para as tabelas do Supabase
-export interface Organization {
+// Tipos para as tabelas do Supabase conforme o PRD
+export interface Usuario {
   id: string
-  created_at: string
-  name: string
-}
-
-export interface Profile {
-  id: string
-  org_id: string
-  full_name: string | null
-  role: string
+  email: string
+  nome: string
+  tipo: 'admin' | 'editor' | 'visualizador'
+  ativo: boolean
   created_at: string
 }
 
-export interface Test {
+export interface Colaborador {
   id: string
-  org_id: string
-  name: string
-  description: string | null
+  nome: string
+  email: string
+  cargo: string | null
+  departamento: string | null
+  ativo: boolean
   created_at: string
 }
 
-export interface Question {
+export interface Teste {
   id: string
-  test_id: string
-  text: string
-  dimension: string
+  codigo: string
+  nome: string
+  descricao: string | null
+  categoria: string | null
+  perguntas: { id: number; texto: string; ordem: number }[]
+  faixas_interpretacao: { min: number; max: number; label: string; cor: string }[]
+  tipo: 'oficial' | 'customizado'
+  criado_por: string | null
+  versao: number
+  ativo: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface TesteVersao {
+  id: string
+  teste_id: string
+  versao: number
+  alterado_por: string
+  alteracoes: string | null
+  snapshot_teste: any
   created_at: string
 }
 
-export interface Evaluation {
+export interface Avaliacao {
   id: string
-  org_id: string
-  test_id: string
-  candidate_name: string
-  candidate_email: string | null
-  status: 'pending' | 'completed'
+  nome: string
+  descricao: string | null
+  criado_por: string
+  testes_ids: string[]
+  status: 'rascunho' | 'enviada' | 'concluida'
   created_at: string
 }
 
-export interface Answer {
+export interface Resposta {
   id: string
-  evaluation_id: string
-  question_id: string
-  value: number
-  created_at: string
-}
-
-export interface Report {
-  id: string
-  evaluation_id: string
-  summary: string | null
-  pdf_url: string | null
+  avaliacao_id: string
+  colaborador_id: string
+  teste_id: string
+  teste_versao: number
+  link_acesso: string
+  respostas: { pergunta_id: number; resposta: number; pergunta_texto: string }[] | null
+  resultado: { score: number; faixa: string; interpretacao: string } | null
+  status: 'pendente' | 'iniciada' | 'concluida'
+  iniciado_em: string | null
+  concluido_em: string | null
   created_at: string
 }
 
