@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './components/ui/select.css';
+
 :root {
   --radius: 1rem;
 }
@@ -42,6 +44,10 @@
   /* Card */
   --card: var(--dark-sidebar);
   --card-foreground: var(--dark-text);
+  
+  /* Popover */
+  --popover: #ffffff;
+  --popover-foreground: #000000;
   
   /* Border e Input */
   --border: #2a2a4a;
@@ -171,7 +177,8 @@ html, body, #root {
 .input {
   @apply border border-input bg-card rounded-xl px-4 py-3 text-base shadow-sm transition-colors;
   outline: none;
-  color: #000000;
+  color: var(--foreground);
+  background-color: var(--card);
 }
 
 .input:focus {
@@ -181,12 +188,12 @@ html, body, #root {
 
 /* Placeholder */
 .input::placeholder {
-  color: #000000;
+  color: var(--muted-foreground);
   opacity: 0.8;
 }
 
 .input:focus::placeholder {
-  color: #000000;
+  color: var(--muted-foreground);
   opacity: 0.6;
 }
 
