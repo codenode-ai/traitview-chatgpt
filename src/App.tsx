@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import AppLayout from "@/components/layout/AppLayout";
 import Dashboard from "@/pages/Dashboard";
 import Testes from "@/pages/Testes";
+import EditarTeste from "@/pages/EditarTeste";
 import Avaliacoes from "@/pages/Avaliacoes";
 import Relatorios from "@/pages/Relatorios";
 import AvaliacaoPublica from "@/pages/public/AvaliacaoPublica";
@@ -20,6 +21,8 @@ export default function App() {
       <Route element={<AppLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="testes" element={<Testes />} />
+        <Route path="testes/editar/:id" element={<EditarTeste />} />
+        <Route path="testes/criar" element={<EditarTeste />} />
         <Route path="avaliacoes" element={<Avaliacoes />} />
         <Route path="relatorios" element={<Relatorios />} />
       </Route>

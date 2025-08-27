@@ -1,35 +1,146 @@
+
 chunk-UPELNCPK.js?v=c709954b:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
 main.tsx:8 main.tsx: Inicializando aplicação...
-main.tsx:19 main.tsx: QueryClient criado _a8
-useMultiTestSession.ts:21 Buscando sessão para token: link_spe4qkel
+main.tsx:19 main.tsx: QueryClient criado _a8 {}
+useMultiTestSession.ts:21 Buscando sessão para token: link_9lx71oto
 seedTestesOficiais.ts:8 Iniciando seed dos testes oficiais...
 react-router-dom.js?v=c709954b:4393 ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
 warnOnce @ react-router-dom.js?v=c709954b:4393
+logDeprecation @ react-router-dom.js?v=c709954b:4396
+logV6DeprecationWarnings @ react-router-dom.js?v=c709954b:4399
+(anonymous) @ react-router-dom.js?v=c709954b:5271
+commitHookEffectListMount @ chunk-UPELNCPK.js?v=c709954b:16915
+commitPassiveMountOnFiber @ chunk-UPELNCPK.js?v=c709954b:18156
+commitPassiveMountEffects_complete @ chunk-UPELNCPK.js?v=c709954b:18129
+commitPassiveMountEffects_begin @ chunk-UPELNCPK.js?v=c709954b:18119
+commitPassiveMountEffects @ chunk-UPELNCPK.js?v=c709954b:18109
+flushPassiveEffectsImpl @ chunk-UPELNCPK.js?v=c709954b:19490
+flushPassiveEffects @ chunk-UPELNCPK.js?v=c709954b:19447
+(anonymous) @ chunk-UPELNCPK.js?v=c709954b:19328
+workLoop @ chunk-UPELNCPK.js?v=c709954b:197
+flushWork @ chunk-UPELNCPK.js?v=c709954b:176
+performWorkUntilDeadline @ chunk-UPELNCPK.js?v=c709954b:384
 react-router-dom.js?v=c709954b:4393 ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
 warnOnce @ react-router-dom.js?v=c709954b:4393
+logDeprecation @ react-router-dom.js?v=c709954b:4396
+logV6DeprecationWarnings @ react-router-dom.js?v=c709954b:4402
+(anonymous) @ react-router-dom.js?v=c709954b:5271
+commitHookEffectListMount @ chunk-UPELNCPK.js?v=c709954b:16915
+commitPassiveMountOnFiber @ chunk-UPELNCPK.js?v=c709954b:18156
+commitPassiveMountEffects_complete @ chunk-UPELNCPK.js?v=c709954b:18129
+commitPassiveMountEffects_begin @ chunk-UPELNCPK.js?v=c709954b:18119
+commitPassiveMountEffects @ chunk-UPELNCPK.js?v=c709954b:18109
+flushPassiveEffectsImpl @ chunk-UPELNCPK.js?v=c709954b:19490
+flushPassiveEffects @ chunk-UPELNCPK.js?v=c709954b:19447
+(anonymous) @ chunk-UPELNCPK.js?v=c709954b:19328
+workLoop @ chunk-UPELNCPK.js?v=c709954b:197
+flushWork @ chunk-UPELNCPK.js?v=c709954b:176
+performWorkUntilDeadline @ chunk-UPELNCPK.js?v=c709954b:384
 seedTestesOficiais.ts:8 Iniciando seed dos testes oficiais...
 seedTestesOficiais.ts:23 Testes oficiais já existem no banco de dados
-useMultiTestSession.ts:40 Erro ao buscar resposta: Object
-queryFn @ useMultiTestSession.ts:40
-useMultiTestSession.ts:100 Erro ao buscar sessão: Error: Link inválido ou expirado
-    at queryFn (useMultiTestSession.ts:41:17)
-queryFn @ useMultiTestSession.ts:100
+useMultiTestSession.ts:61 Erro ao buscar todas as respostas: {code: 'PGRST201', details: Array(2), hint: "Try changing 'testes' to one of the following: 'te…nd the desired relationship in the 'details' key.", message: "Could not embed because more than one relationship was found for 'respostas' and 'testes'"}
+queryFn @ useMultiTestSession.ts:61
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=c709954b:879
+run @ @tanstack_react-query.js?v=c709954b:507
+start @ @tanstack_react-query.js?v=c709954b:550
+fetch @ @tanstack_react-query.js?v=c709954b:918
+executeFetch_fn @ @tanstack_react-query.js?v=c709954b:2280
+onSubscribe @ @tanstack_react-query.js?v=c709954b:1976
+subscribe @ @tanstack_react-query.js?v=c709954b:24
+(anonymous) @ @tanstack_react-query.js?v=c709954b:3147
+subscribeToStore @ chunk-UPELNCPK.js?v=c709954b:11984
+commitHookEffectListMount @ chunk-UPELNCPK.js?v=c709954b:16915
+commitPassiveMountOnFiber @ chunk-UPELNCPK.js?v=c709954b:18156
+commitPassiveMountEffects_complete @ chunk-UPELNCPK.js?v=c709954b:18129
+commitPassiveMountEffects_begin @ chunk-UPELNCPK.js?v=c709954b:18119
+commitPassiveMountEffects @ chunk-UPELNCPK.js?v=c709954b:18109
+flushPassiveEffectsImpl @ chunk-UPELNCPK.js?v=c709954b:19490
+flushPassiveEffects @ chunk-UPELNCPK.js?v=c709954b:19447
+(anonymous) @ chunk-UPELNCPK.js?v=c709954b:19328
+workLoop @ chunk-UPELNCPK.js?v=c709954b:197
+flushWork @ chunk-UPELNCPK.js?v=c709954b:176
+performWorkUntilDeadline @ chunk-UPELNCPK.js?v=c709954b:384
+useMultiTestSession.ts:88 Erro ao buscar sessão: Error: Erro ao buscar dados da sessão
+    at queryFn (useMultiTestSession.ts:62:17)
+queryFn @ useMultiTestSession.ts:88
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=c709954b:879
+run @ @tanstack_react-query.js?v=c709954b:507
+start @ @tanstack_react-query.js?v=c709954b:550
+fetch @ @tanstack_react-query.js?v=c709954b:918
+executeFetch_fn @ @tanstack_react-query.js?v=c709954b:2280
+onSubscribe @ @tanstack_react-query.js?v=c709954b:1976
+subscribe @ @tanstack_react-query.js?v=c709954b:24
+(anonymous) @ @tanstack_react-query.js?v=c709954b:3147
+subscribeToStore @ chunk-UPELNCPK.js?v=c709954b:11984
+commitHookEffectListMount @ chunk-UPELNCPK.js?v=c709954b:16915
+commitPassiveMountOnFiber @ chunk-UPELNCPK.js?v=c709954b:18156
+commitPassiveMountEffects_complete @ chunk-UPELNCPK.js?v=c709954b:18129
+commitPassiveMountEffects_begin @ chunk-UPELNCPK.js?v=c709954b:18119
+commitPassiveMountEffects @ chunk-UPELNCPK.js?v=c709954b:18109
+flushPassiveEffectsImpl @ chunk-UPELNCPK.js?v=c709954b:19490
+flushPassiveEffects @ chunk-UPELNCPK.js?v=c709954b:19447
+(anonymous) @ chunk-UPELNCPK.js?v=c709954b:19328
+workLoop @ chunk-UPELNCPK.js?v=c709954b:197
+flushWork @ chunk-UPELNCPK.js?v=c709954b:176
+performWorkUntilDeadline @ chunk-UPELNCPK.js?v=c709954b:384
 seedTestesOficiais.ts:23 Testes oficiais já existem no banco de dados
-useMultiTestSession.ts:21 Buscando sessão para token: link_spe4qkel
-useMultiTestSession.ts:40 Erro ao buscar resposta: Object
-queryFn @ useMultiTestSession.ts:40
-useMultiTestSession.ts:100 Erro ao buscar sessão: Error: Link inválido ou expirado
-    at queryFn (useMultiTestSession.ts:41:17)
-queryFn @ useMultiTestSession.ts:100
-useMultiTestSession.ts:21 Buscando sessão para token: link_spe4qkel
-useMultiTestSession.ts:40 Erro ao buscar resposta: Object
-queryFn @ useMultiTestSession.ts:40
-useMultiTestSession.ts:100 Erro ao buscar sessão: Error: Link inválido ou expirado
-    at queryFn (useMultiTestSession.ts:41:17)
-queryFn @ useMultiTestSession.ts:100
-useMultiTestSession.ts:21 Buscando sessão para token: link_spe4qkel
-useMultiTestSession.ts:40 Erro ao buscar resposta: Object
-queryFn @ useMultiTestSession.ts:40
-useMultiTestSession.ts:100 Erro ao buscar sessão: Error: Link inválido ou expirado
-    at queryFn (useMultiTestSession.ts:41:17)
-queryFn @ useMultiTestSession.ts:100
+useMultiTestSession.ts:21 Buscando sessão para token: link_9lx71oto
+useMultiTestSession.ts:61 Erro ao buscar todas as respostas: {code: 'PGRST201', details: Array(2), hint: "Try changing 'testes' to one of the following: 'te…nd the desired relationship in the 'details' key.", message: "Could not embed because more than one relationship was found for 'respostas' and 'testes'"}code: "PGRST201"details: Array(2)0: {cardinality: 'many-to-one', embedding: 'respostas with testes', relationship: 'fk_respostas_teste_id using respostas(teste_id) and testes(id)'}1: {cardinality: 'many-to-one', embedding: 'respostas with testes', relationship: 'respostas_teste_id_fkey using respostas(teste_id) and testes(id)'}length: 2[[Prototype]]: Array(0)hint: "Try changing 'testes' to one of the following: 'testes!fk_respostas_teste_id', 'testes!respostas_teste_id_fkey'. Find the desired relationship in the 'details' key."message: "Could not embed because more than one relationship was found for 'respostas' and 'testes'"[[Prototype]]: Objectconstructor: ƒ Object()hasOwnProperty: ƒ hasOwnProperty()isPrototypeOf: ƒ isPrototypeOf()propertyIsEnumerable: ƒ propertyIsEnumerable()toLocaleString: ƒ toLocaleString()toString: ƒ toString()valueOf: ƒ valueOf()__defineGetter__: ƒ __defineGetter__()__defineSetter__: ƒ __defineSetter__()__lookupGetter__: ƒ __lookupGetter__()__lookupSetter__: ƒ __lookupSetter__()__proto__: (...)get __proto__: ƒ __proto__()set __proto__: ƒ __proto__()
+queryFn @ useMultiTestSession.ts:61
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=c709954b:879
+run @ @tanstack_react-query.js?v=c709954b:507
+(anonymous) @ @tanstack_react-query.js?v=c709954b:532
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=c709954b:528
+Promise.catch
+run @ @tanstack_react-query.js?v=c709954b:511
+start @ @tanstack_react-query.js?v=c709954b:550
+fetch @ @tanstack_react-query.js?v=c709954b:918
+executeFetch_fn @ @tanstack_react-query.js?v=c709954b:2280
+onSubscribe @ @tanstack_react-query.js?v=c709954b:1976
+subscribe @ @tanstack_react-query.js?v=c709954b:24
+(anonymous) @ @tanstack_react-query.js?v=c709954b:3147
+subscribeToStore @ chunk-UPELNCPK.js?v=c709954b:11984
+commitHookEffectListMount @ chunk-UPELNCPK.js?v=c709954b:16915
+commitPassiveMountOnFiber @ chunk-UPELNCPK.js?v=c709954b:18156
+commitPassiveMountEffects_complete @ chunk-UPELNCPK.js?v=c709954b:18129
+commitPassiveMountEffects_begin @ chunk-UPELNCPK.js?v=c709954b:18119
+commitPassiveMountEffects @ chunk-UPELNCPK.js?v=c709954b:18109
+flushPassiveEffectsImpl @ chunk-UPELNCPK.js?v=c709954b:19490
+flushPassiveEffects @ chunk-UPELNCPK.js?v=c709954b:19447
+(anonymous) @ chunk-UPELNCPK.js?v=c709954b:19328
+workLoop @ chunk-UPELNCPK.js?v=c709954b:197
+flushWork @ chunk-UPELNCPK.js?v=c709954b:176
+performWorkUntilDeadline @ chunk-UPELNCPK.js?v=c709954b:384
+useMultiTestSession.ts:88 Erro ao buscar sessão: Error: Erro ao buscar dados da sessão
+    at queryFn (useMultiTestSession.ts:62:17)
+queryFn @ useMultiTestSession.ts:88
+await in queryFn
+fetchFn @ @tanstack_react-query.js?v=c709954b:879
+run @ @tanstack_react-query.js?v=c709954b:507
+(anonymous) @ @tanstack_react-query.js?v=c709954b:532
+Promise.then
+(anonymous) @ @tanstack_react-query.js?v=c709954b:528
+Promise.catch
+run @ @tanstack_react-query.js?v=c709954b:511
+start @ @tanstack_react-query.js?v=c709954b:550
+fetch @ @tanstack_react-query.js?v=c709954b:918
+executeFetch_fn @ @tanstack_react-query.js?v=c709954b:2280
+onSubscribe @ @tanstack_react-query.js?v=c709954b:1976
+subscribe @ @tanstack_react-query.js?v=c709954b:24
+(anonymous) @ @tanstack_react-query.js?v=c709954b:3147
+subscribeToStore @ chunk-UPELNCPK.js?v=c709954b:11984
+commitHookEffectListMount @ chunk-UPELNCPK.js?v=c709954b:16915
+commitPassiveMountOnFiber @ chunk-UPELNCPK.js?v=c709954b:18156
+commitPassiveMountEffects_complete @ chunk-UPELNCPK.js?v=c709954b:18129
+commitPassiveMountEffects_begin @ chunk-UPELNCPK.js?v=c709954b:18119
+commitPassiveMountEffects @ chunk-UPELNCPK.js?v=c709954b:18109
+flushPassiveEffectsImpl @ chunk-UPELNCPK.js?v=c709954b:19490
+flushPassiveEffects @ chunk-UPELNCPK.js?v=c709954b:19447
+(anonymous) @ chunk-UPELNCPK.js?v=c709954b:19328
+workLoop @ chunk-UPELNCPK.js?v=c709954b:197
+flushWork @ chunk-UPELNCPK.js?v=c709954b:176
+performWorkUntilDeadline @ chunk-UPELNCPK.js?v=c709954b:384

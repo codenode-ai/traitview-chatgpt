@@ -158,20 +158,6 @@ export default function AvaliacaoPublica() {
           Obrigado por completar todos os testes. Suas respostas foram registradas com sucesso e os resultados serão processados.
         </p>
         <div className="flex flex-col gap-2">
-          <Button onClick={() => navigate("/")}>Voltar para início</Button>
-          <Button 
-            variant="outline" 
-            onClick={() => {
-              if (window.opener) {
-                window.close();
-              } else {
-                window.location.href = "/";
-              }
-            }}
-            className="mt-2"
-          >
-            Fechar página
-          </Button>
         </div>
       </motion.div>
     );
@@ -194,7 +180,6 @@ export default function AvaliacaoPublica() {
           O tempo limite para conclusão do teste foi atingido.
         </p>
         <div className="flex gap-2 justify-center">
-          <Button onClick={() => navigate("/")}>Voltar para início</Button>
           <Button onClick={restartTest} variant="outline">
             <RotateCcw size={16} className="mr-2" />
             Reiniciar teste
