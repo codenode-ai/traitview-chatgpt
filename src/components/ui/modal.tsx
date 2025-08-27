@@ -60,9 +60,9 @@ export function Modal({ isOpen, onClose, title, children, size = "md" }: ModalPr
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className={`relative w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-card p-6 shadow-2xl`}
+            className={`relative w-full ${sizeClasses[size]} max-h-[95vh] rounded-2xl border border-border bg-card shadow-2xl flex flex-col`}
           >
-            <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center justify-between p-6 border-b border-border flex-shrink-0">
               <h3 className="text-xl font-bold">{title}</h3>
               <button
                 onClick={onClose}
@@ -84,7 +84,11 @@ export function Modal({ isOpen, onClose, title, children, size = "md" }: ModalPr
                 </svg>
               </button>
             </div>
-            <div className="mt-2">{children}</div>
+            <div className="p-6 flex-grow overflow-y-auto flex flex-col">
+              <div className="flex-grow">
+                {children}
+              </div>
+            </div>
           </motion.div>
         </motion.div>
       )}

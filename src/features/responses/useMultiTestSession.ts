@@ -20,80 +20,68 @@ export const useMultiTestSession = (token: string | undefined) => {
       try {
         console.log('Buscando sessão para token:', token)
         
-        // Buscar a resposta pelo token
-        const { data: resposta, error: respostaError } = await supabase
-          .from('respostas')
-          .select(`
-            id,
-            avaliacao_id,
-            status,
-            link_acesso,
-            avaliacoes(
-              id,
-              testes_ids
-            )
-          `)
-          .eq('link_acesso', token)
-          .single()
+        // Validar token e obter dados da resposta usando a função RPC
+        const { data: respostaData, error: respostaError } = await supabase
+          .rpc('validar_token_resposta', { token })
         
         if (respostaError) {
-          console.error('Erro ao buscar resposta:', respostaError)
+          console.error('Erro ao validar token:', respostaError)
           throw new Error("Link inválido ou expirado")
         }
         
-        if (!resposta) {
-          throw new Error("Sessão não encontrada")
+        if (!respostaData || respostaData.length === 0) {
+          throw new Error("Link inválido ou expirado")
         }
         
-        const avaliacaoId = resposta.avaliacao_id
-        const testesIds = resposta.avaliacoes?.testes_ids || []
+        const resposta = respostaData[0]
         
-        // Buscar a avaliação completa para obter os testes
-        const { data: avaliacao, error: avaliacaoError } = await supabase
-          .from('avaliacoes')
+        // Se a resposta estiver expirada
+        if (resposta.expirado) {
+          throw new Error("Link expirado")
+        }
+        
+        // Buscar todas as respostas da mesma avaliação
+        const { data: todasRespostas, error: todasRespostasError } = await supabase
+          .from('respostas')
           .select(`
             id,
-            testes_ids,
-            testes(
+            teste_id,
+            status,
+            link_acesso,
+            testes!fk_respostas_teste_id(
               id,
               nome,
               descricao,
               perguntas
             )
           `)
-          .eq('id', avaliacaoId)
-          .single()
+          .eq('avaliacao_id', resposta.avaliacao_id)
         
-        if (avaliacaoError) {
-          console.error('Erro ao buscar avaliação:', avaliacaoError)
-          throw new Error("Erro ao buscar dados da avaliação")
+        if (todasRespostasError) {
+          console.error('Erro ao buscar todas as respostas:', todasRespostasError)
+          throw new Error("Erro ao buscar dados da sessão")
         }
         
         // Marcar a resposta como iniciada se ainda não estiver
-        if (resposta.status === 'pendente') {
+        if (resposta.status_resposta === 'pendente') {
           console.log('Marcando resposta como iniciada')
           await supabase
-            .from('respostas')
-            .update({ 
-              status: 'iniciada',
-              iniciado_em: new Date().toISOString()
-            })
-            .eq('id', resposta.id)
+            .rpc('marcar_resposta_iniciada', { token })
         }
         
         // Criar estrutura de testes para a sessão
-        const testesParaSessao = (avaliacao.testes || []).map((teste: any) => ({
-          resposta_id: resposta.id,
-          teste_id: teste.id,
-          teste_nome: teste.nome,
-          teste_descricao: teste.descricao,
-          teste_perguntas: teste.perguntas || [],
-          status_resposta: resposta.status === 'concluida' ? 'concluida' : 'pendente',
-          link_acesso: resposta.link_acesso
+        const testesParaSessao = todasRespostas.map((r: any) => ({
+          resposta_id: r.id,
+          teste_id: r.teste_id,
+          teste_nome: r.testes?.nome || "Teste",
+          teste_descricao: r.testes?.descricao || "",
+          teste_perguntas: r.testes?.perguntas || [],
+          status_resposta: r.status,
+          link_acesso: r.link_acesso
         }))
         
         return {
-          avaliacao_id: avaliacaoId,
+          avaliacao_id: resposta.avaliacao_id,
           testes: testesParaSessao
         }
       } catch (error: any) {
@@ -116,7 +104,7 @@ export const useMultiTestSession = (token: string | undefined) => {
       }
       
       try {
-        console.log('Salvando respostas para resposta:', respostaId, respostas)
+        console.log('Salvando respostas para resposta:', respostaId)
         
         // Atualizar a resposta
         const { data, error } = await supabase
