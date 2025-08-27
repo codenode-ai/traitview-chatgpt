@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { BarChart3, Users2, ClipboardList, ListChecks, PieChart } from "lucide-react";
+import { BarChart3, ClipboardList, ListChecks, PieChart } from "lucide-react";
 import { motion } from "framer-motion";
 import { defaultUser } from "@/lib/defaultUser";
 
@@ -16,10 +16,6 @@ export default function AppLayout() {
               <BarChart3 size={20}/> 
               <span>Dashboard</span>
             </NavLink>
-            <NavLink to="/colaboradores" className="navlink">
-              <Users2 size={20}/> 
-              <span>Colaboradores</span>
-            </NavLink>
             <NavLink to="/testes" className="navlink">
               <ClipboardList size={20}/> 
               <span>Testes</span>
@@ -33,9 +29,6 @@ export default function AppLayout() {
               <span>Relatórios</span>
             </NavLink>
           </nav>
-          <div className="mt-6">
-            <a href="https://www.codenode.com.br/" target="_blank" className="text-xs underline text-muted-foreground hover:text-foreground transition-colors">CodeNode.AI</a>
-          </div>
         </div>
       </aside>
       <main className="main">

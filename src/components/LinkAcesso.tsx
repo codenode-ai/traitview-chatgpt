@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, Timer } from "lucide-react";
+import { Copy, Check, Timer, Link as LinkIcon } from "lucide-react";
 
 interface LinkAcessoProps {
   link: string;
   expiresAt?: Date;
+  testName?: string;
 }
 
-export function LinkAcesso({ link, expiresAt }: LinkAcessoProps) {
+export function LinkAcesso({ link, expiresAt, testName }: LinkAcessoProps) {
   const [copied, setCopied] = useState(false);
   const [timeLeft, setTimeLeft] = useState<string>("");
 
@@ -27,19 +28,19 @@ export function LinkAcesso({ link, expiresAt }: LinkAcessoProps) {
         return "Expirado";
       }
       
-      const hours = Math.floor(difference / (1000 * 60 * 60));
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+      
+      if (days > 0) {
+        return `${days}d ${hours}h`;
+      }
       
       if (hours > 0) {
         return `${hours}h ${minutes}m`;
       }
       
-      if (minutes > 0) {
-        return `${minutes}m ${seconds}s`;
-      }
-      
-      return `${seconds}s`;
+      return `${minutes}m`;
     };
 
     setTimeLeft(calculateTimeLeft());
@@ -51,19 +52,29 @@ export function LinkAcesso({ link, expiresAt }: LinkAcessoProps) {
       if (time === "Expirado") {
         clearInterval(timer);
       }
-    }, 1000);
+    }, 60000); // Atualizar a cada minuto
 
     return () => clearInterval(timer);
   }, [expiresAt]);
 
   return (
-    <div className="flex items-center gap-2 p-2 bg-muted rounded-lg">
-      <div className="flex-1 text-sm truncate">
-        {link}
+    <div className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 bg-muted rounded-lg border">
+      <div className="flex-1 min-w-0">
+        {testName && (
+          <div className="text-xs font-medium text-muted-foreground mb-1 truncate">
+            {testName}
+          </div>
+        )}
+        <div className="flex items-center gap-2">
+          <LinkIcon size={16} className="text-muted-foreground flex-shrink-0" />
+          <div className="text-sm truncate">
+            {link}
+          </div>
+        </div>
       </div>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2 flex-shrink-0">
         {expiresAt && (
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1 text-xs text-muted-foreground bg-background px-2 py-1 rounded">
             <Timer size={14} />
             <span>{timeLeft}</span>
           </div>
@@ -72,7 +83,7 @@ export function LinkAcesso({ link, expiresAt }: LinkAcessoProps) {
           variant="outline" 
           size="sm" 
           onClick={handleCopy}
-          className="flex items-center gap-1"
+          className="flex items-center gap-1 whitespace-nowrap"
         >
           {copied ? (
             <>

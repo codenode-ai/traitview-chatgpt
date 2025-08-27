@@ -1,0 +1,35 @@
+chunk-UPELNCPK.js?v=c709954b:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+main.tsx:8 main.tsx: Inicializando aplicação...
+main.tsx:19 main.tsx: QueryClient criado _a8
+useMultiTestSession.ts:21 Buscando sessão para token: link_spe4qkel
+seedTestesOficiais.ts:8 Iniciando seed dos testes oficiais...
+react-router-dom.js?v=c709954b:4393 ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+warnOnce @ react-router-dom.js?v=c709954b:4393
+react-router-dom.js?v=c709954b:4393 ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+warnOnce @ react-router-dom.js?v=c709954b:4393
+seedTestesOficiais.ts:8 Iniciando seed dos testes oficiais...
+seedTestesOficiais.ts:23 Testes oficiais já existem no banco de dados
+useMultiTestSession.ts:40 Erro ao buscar resposta: Object
+queryFn @ useMultiTestSession.ts:40
+useMultiTestSession.ts:100 Erro ao buscar sessão: Error: Link inválido ou expirado
+    at queryFn (useMultiTestSession.ts:41:17)
+queryFn @ useMultiTestSession.ts:100
+seedTestesOficiais.ts:23 Testes oficiais já existem no banco de dados
+useMultiTestSession.ts:21 Buscando sessão para token: link_spe4qkel
+useMultiTestSession.ts:40 Erro ao buscar resposta: Object
+queryFn @ useMultiTestSession.ts:40
+useMultiTestSession.ts:100 Erro ao buscar sessão: Error: Link inválido ou expirado
+    at queryFn (useMultiTestSession.ts:41:17)
+queryFn @ useMultiTestSession.ts:100
+useMultiTestSession.ts:21 Buscando sessão para token: link_spe4qkel
+useMultiTestSession.ts:40 Erro ao buscar resposta: Object
+queryFn @ useMultiTestSession.ts:40
+useMultiTestSession.ts:100 Erro ao buscar sessão: Error: Link inválido ou expirado
+    at queryFn (useMultiTestSession.ts:41:17)
+queryFn @ useMultiTestSession.ts:100
+useMultiTestSession.ts:21 Buscando sessão para token: link_spe4qkel
+useMultiTestSession.ts:40 Erro ao buscar resposta: Object
+queryFn @ useMultiTestSession.ts:40
+useMultiTestSession.ts:100 Erro ao buscar sessão: Error: Link inválido ou expirado
+    at queryFn (useMultiTestSession.ts:41:17)
+queryFn @ useMultiTestSession.ts:100

@@ -7,11 +7,6 @@ import { useRef } from "react";
 import { useQuery } from '@tanstack/react-query';
 import { dataService } from '@/lib/dataService';
 
-function average(values: number[]) {
-  if (values.length === 0) return 0;
-  return values.reduce((a,b)=>a+b,0)/values.length;
-}
-
 export default function Relatorios() {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -26,18 +21,8 @@ export default function Relatorios() {
     queryFn: () => dataService.testes.getAll()
   });
 
-  const { data: avaliacoes = [], isLoading: loadingAvaliacoes } = useQuery({
-    queryKey: ['avaliacoes'],
-    queryFn: () => dataService.avaliacoes.getAll()
-  });
-
-  const { data: colaboradores = [], isLoading: loadingColaboradores } = useQuery({
-    queryKey: ['colaboradores'],
-    queryFn: () => dataService.colaboradores.getAll()
-  });
-
   // Mostrar loading enquanto carrega os dados
-  if (loadingRespostas || loadingTestes || loadingAvaliacoes || loadingColaboradores) {
+  if (loadingRespostas || loadingTestes) {
     return (
       <motion.div 
         initial={{ opacity: 0, y: 8 }} 
@@ -51,24 +36,30 @@ export default function Relatorios() {
   }
 
   // Processar os dados para exibição
-  const rows = respostas.map(resposta => {
-    const teste = testes.find(t => t.id === resposta.teste_id);
-    const avaliacao = avaliacoes.find(a => a.id === resposta.avaliacao_id);
-    const colaborador = colaboradores.find(c => c.id === resposta.colaborador_id);
-    
-    // Calcular o score médio
-    let score = 0;
-    if (resposta.respostas && Array.isArray(resposta.respostas)) {
-      score = average(resposta.respostas.map(r => r.resposta));
-    }
-    
-    return {
-      avaliacaoNome: avaliacao?.nome || "—",
-      testeNome: teste?.nome || "—",
-      colaboradorNome: colaborador?.nome || resposta.colaborador_id.slice(0,8) + "…",
-      score: score.toFixed(2)
-    }
-  });
+  const rows = respostas
+    .filter(resposta => resposta.status === 'concluida') // Apenas respostas concluídas
+    .map(resposta => {
+      const teste = testes.find(t => t.id === resposta.teste_id);
+      
+      // Obter score e faixa do resultado calculado
+      let score = "0.00";
+      let faixa = "Não definida";
+      
+      if (resposta.resultado) {
+        score = resposta.resultado.score.toFixed(2);
+        faixa = resposta.resultado.faixa || "Não definida";
+      }
+      
+      return {
+        id: resposta.id,
+        testeNome: teste?.nome || "—",
+        email: resposta.colaborador_id || "destinatario@exemplo.com", // Usar o ID do colaborador ou e-mail padrão
+        score: score,
+        faixa: faixa,
+        data: new Date(resposta.concluido_em || resposta.created_at).toLocaleDateString()
+      }
+    })
+    .sort((a, b) => parseFloat(b.score) - parseFloat(a.score)); // Ordenar por score descendente
 
   async function exportPDF() {
     if (!ref.current) return;
@@ -97,22 +88,42 @@ export default function Relatorios() {
         <Table>
           <THead>
             <TR>
-              <TH>Avaliação</TH>
               <TH>Teste</TH>
-              <TH>Colaborador</TH>
+              <TH>E-mail</TH>
               <TH>Score médio (1–5)</TH>
+              <TH>Faixa</TH>
+              <TH>Data</TH>
             </TR>
           </THead>
           <TBody>
-            {rows.map((r, i) => (
-              <TR key={i}>
-                <TD>{r.avaliacaoNome}</TD>
+            {rows.map((r) => (
+              <TR key={r.id}>
                 <TD>{r.testeNome}</TD>
-                <TD>{r.colaboradorNome}</TD>
-                <TD>{r.score}</TD>
+                <TD>{r.email}</TD>
+                <TD>
+                  <div className="flex items-center gap-2">
+                    <span>{r.score}</span>
+                    <div className="w-24 bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-vibrant-blue h-2 rounded-full" 
+                        style={{ width: `${(parseFloat(r.score) / 5) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </TD>
+                <TD>
+                  <span className={`badge ${
+                    r.faixa === "Baixo" ? "bg-red-500" : 
+                    r.faixa === "Médio" ? "bg-yellow-500" : 
+                    r.faixa === "Alto" ? "bg-green-500" : "bg-gray-500"
+                  }`}>
+                    {r.faixa}
+                  </span>
+                </TD>
+                <TD>{r.data}</TD>
               </TR>
             ))}
-            {rows.length === 0 && <TR><TD colSpan={4} className="text-center py-6 text-muted-foreground">Sem respostas ainda.</TD></TR>}
+            {rows.length === 0 && <TR><TD colSpan={5} className="text-center py-6 text-muted-foreground">Sem respostas concluídas ainda.</TD></TR>}
           </TBody>
         </Table>
       </div>

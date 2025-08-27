@@ -17,21 +17,32 @@ export const useAvaliacaoPublica = (token: string | undefined) => {
         throw new Error("Token não fornecido")
       }
       
-      const data = await dataService.respostas.validarTokenEObterDados(token)
-      
-      if (!data) {
-        throw new Error("Link inválido ou expirado")
+      try {
+        console.log('Validando token:', token)
+        const data = await dataService.respostas.validarTokenEObterDados(token)
+        console.log('Dados recebidos:', data)
+        
+        if (!data) {
+          throw new Error("Link inválido ou expirado")
+        }
+        
+        // Se a resposta ainda não foi iniciada, marcar como iniciada
+        if (data.status_resposta === 'pendente') {
+          console.log('Marcando resposta como iniciada')
+          await dataService.respostas.marcarRespostaIniciada(token)
+        }
+        
+        return data
+      } catch (error: any) {
+        console.error('Erro ao validar token:', error)
+        if (error.message?.includes('configuração')) {
+          throw new Error('Problema de configuração no servidor. Por favor, tente novamente mais tarde.')
+        }
+        throw new Error(error.message || "Erro ao validar o link de acesso")
       }
-      
-      // Se a resposta ainda não foi iniciada, marcar como iniciada
-      if (data.status_resposta === 'pendente') {
-        await dataService.respostas.marcarRespostaIniciada(token)
-      }
-      
-      return data
     },
     enabled: !!token,
-    retry: false
+    retry: 1 // Tentar apenas uma vez novamente em caso de erro
   })
 
   // Mutation para salvar respostas
@@ -41,10 +52,20 @@ export const useAvaliacaoPublica = (token: string | undefined) => {
         throw new Error("Token não fornecido")
       }
       
-      // Salvar respostas validando o token
-      await dataService.respostas.salvarRespostasComToken(token, respostas)
-      
-      return true
+      try {
+        console.log('Salvando respostas com token:', token)
+        // Salvar respostas validando o token
+        const result = await dataService.respostas.salvarRespostasComToken(token, respostas)
+        console.log('Respostas salvas:', result)
+        
+        return result
+      } catch (error: any) {
+        console.error('Erro ao salvar respostas:', error)
+        if (error.message?.includes('inválido')) {
+          throw new Error('Link expirado ou inválido. Por favor, solicite um novo link.')
+        }
+        throw new Error(error.message || "Erro ao salvar respostas")
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['resposta', token] })

@@ -50,7 +50,7 @@ export interface Avaliacao {
   id: string
   nome: string
   descricao: string | null
-  criado_por: string
+  criado_por: string | null
   testes_ids: string[]
   status: 'rascunho' | 'enviada' | 'concluida'
   created_at: string
@@ -59,7 +59,7 @@ export interface Avaliacao {
 export interface Resposta {
   id: string
   avaliacao_id: string
-  colaborador_id: string
+  colaborador_id: string | null
   teste_id: string
   teste_versao: number
   link_acesso: string

@@ -24,7 +24,6 @@ export const respostaService = {
       .from('respostas')
       .select(`
         *,
-        colaboradores(nome, email),
         testes(*)
       `)
       .eq('avaliacao_id', avaliacaoId)
@@ -43,7 +42,6 @@ export const respostaService = {
       .from('respostas')
       .select(`
         *,
-        colaboradores(nome, email),
         testes(*)
       `)
       .eq('id', id)
@@ -63,7 +61,6 @@ export const respostaService = {
       .from('respostas')
       .select(`
         *,
-        colaboradores(nome, email),
         testes(*)
       `)
       .eq('link_acesso', linkAcesso)
@@ -79,28 +76,33 @@ export const respostaService = {
 
   // Criar nova resposta (gera link de acesso automaticamente)
   async create(resposta: Omit<Resposta, 'id' | 'created_at' | 'link_acesso' | 'status' | 'iniciado_em' | 'concluido_em'>): Promise<Resposta> {
-    // Gerar token único para o link de acesso
-    const linkAcesso = uid('link_')
-    
-    const { data, error } = await supabase
-      .from('respostas')
-      .insert({
-        ...resposta,
-        link_acesso: linkAcesso,
-        status: 'pendente',
-        iniciado_em: null,
-        concluido_em: null,
-        created_at: new Date().toISOString()
-      })
-      .select()
-      .single()
-    
-    if (error) {
+    try {
+      // Gerar token único para o link de acesso
+      const linkAcesso = uid('link_')
+      
+      const { data, error } = await supabase
+        .from('respostas')
+        .insert({
+          ...resposta,
+          link_acesso: linkAcesso,
+          status: 'pendente',
+          iniciado_em: null,
+          concluido_em: null,
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single()
+      
+      if (error) {
+        console.error('Erro ao criar resposta:', error)
+        throw error
+      }
+      
+      return data
+    } catch (error) {
       console.error('Erro ao criar resposta:', error)
       throw error
     }
-    
-    return data
   },
 
   // Atualizar resposta
@@ -171,15 +173,24 @@ export const respostaService = {
 
   // Validar token e obter dados da resposta
   async validarTokenEObterDados(token: string): Promise<any> {
-    const { data, error } = await supabase
-      .rpc('validar_token_resposta', { token })
-    
-    if (error) {
-      console.error('Erro ao validar token:', error)
-      throw error
+    try {
+      const { data, error } = await supabase
+        .rpc('validar_token_resposta', { token })
+      
+      if (error) {
+        console.error('Erro ao validar token:', error)
+        // Verificar se é um erro de tipo/estrutura
+        if (error.code === '42601') {
+          throw new Error('Erro de configuração no servidor. Por favor, verifique as funções do Supabase.')
+        }
+        throw new Error(error.message || 'Erro ao validar o link de acesso')
+      }
+      
+      return data
+    } catch (error: any) {
+      console.error('Erro inesperado ao validar token:', error)
+      throw new Error(error.message || 'Erro ao validar o link de acesso')
     }
-    
-    return data
   },
 
   // Salvar respostas validando token
