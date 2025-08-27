@@ -4,6 +4,7 @@ import { testeService } from '@/features/tests/testeService'
 import { testeVersaoService } from '@/features/tests/testeVersaoService'
 import { avaliacaoService } from '@/features/assessments/avaliacaoService'
 import { respostaService } from '@/features/responses/respostaService'
+import { defaultUser } from '@/lib/defaultUser'
 
 // Serviço agregador que combina todos os serviços específicos
 export const dataService = {
@@ -12,7 +13,8 @@ export const dataService = {
   testes: testeService,
   testesVersoes: testeVersaoService,
   avaliacoes: avaliacaoService,
-  respostas: respostaService
+  respostas: respostaService,
+  defaultUser
 }
 
 // Função para carregar todos os dados de um teste (incluindo perguntas)
@@ -98,6 +100,28 @@ export const marcarRespostaIniciada = async (token: string) => {
     return result
   } catch (error) {
     console.error('Erro ao marcar resposta como iniciada:', error)
+    throw error
+  }
+}
+
+// Obter usuário atual (para single-tenant)
+export const getCurrentUser = async () => {
+  try {
+    // Para single-tenant, retornar o usuário padrão
+    return defaultUser
+  } catch (error) {
+    console.error('Erro ao obter usuário atual:', error)
+    throw error
+  }
+}
+
+// Obter todos os usuários (para single-tenant, retorna apenas o usuário padrão)
+export const getAllUsers = async () => {
+  try {
+    // Para single-tenant, retornar apenas o usuário padrão
+    return [defaultUser]
+  } catch (error) {
+    console.error('Erro ao obter todos os usuários:', error)
     throw error
   }
 }
