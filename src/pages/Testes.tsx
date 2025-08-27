@@ -4,7 +4,7 @@ import { dataService } from '@/lib/dataService';
 import { Button } from "@/components/ui/button";
 import { Table, THead, TBody, TR, TH, TD } from "@/components/ui/table";
 import { motion } from "framer-motion";
-import { Edit } from "lucide-react";
+import { Plus, Edit } from "lucide-react";
 import { Teste } from "@/lib/supabaseClient";
 
 export default function Testes() {
@@ -61,7 +61,7 @@ export default function Testes() {
               </TR>
             </THead>
             <TBody>
-              {tests.map(t => (
+              {tests.map((t: Teste) => (
                 <TR key={t.id}>
                   <TD>{t.nome}</TD>
                   <TD>{t.categoria || "Customizado"}</TD>

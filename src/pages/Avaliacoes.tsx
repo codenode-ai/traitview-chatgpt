@@ -59,22 +59,26 @@ export default function Avaliacoes() {
           status: "enviada" // Marcar como enviada diretamente
         });
 
-        // Criar apenas UMA resposta para a avaliação inteira (não uma por teste)
-        // Usamos o primeiro teste como referência, mas todos os testes estarão disponíveis
-        const primeiraResposta = await dataService.respostas.create({
-          avaliacao_id: avaliacao.id,
-          colaborador_id: null, // Não há colaborador associado
-          teste_id: selectedTests[0], // Usamos o primeiro teste como referência
-          teste_versao: 1, // TODO: Obter versão correta do teste
-          respostas: null,
-          resultado: null
-        });
+        // Criar respostas para cada teste selecionado
+        const respostasPromises = selectedTests.map(testeId => 
+          dataService.respostas.create({
+            avaliacao_id: avaliacao.id,
+            colaborador_id: null, // Não há colaborador associado
+            teste_id: testeId,
+            teste_versao: 1, // TODO: Obter versão correta do teste
+            respostas: null,
+            resultado: null
+          })
+        );
 
-        // Formatar link para exibição (apenas um link para todos os testes)
+        const respostas = await Promise.all(respostasPromises);
+
+        // Formatar links para exibição (apenas um link para todos os testes)
+        // Usamos o link da primeira resposta, mas todas as respostas estão associadas à mesma avaliação
         return [{
-          id: primeiraResposta.id,
+          id: respostas[0].id,
           testName: `${selectedTests.length} testes selecionados`,
-          link: `${localOrigin}/avaliacao/${primeiraResposta.link_acesso}`,
+          link: `${localOrigin}/avaliacao/${respostas[0].link_acesso}`,
           expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 dias a partir de agora
         }];
       } catch (error: any) {
