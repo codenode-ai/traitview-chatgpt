@@ -97,7 +97,7 @@ html, body, #root {
 
 .input-like {
   @apply h-12 w-full rounded-xl border border-input bg-card px-4 py-3 text-base shadow-sm transition-colors;
-  color: #1a1a2e;
+  color: #000000;
 }
 
 .input-like:focus {
@@ -171,7 +171,7 @@ html, body, #root {
 .input {
   @apply border border-input bg-card rounded-xl px-4 py-3 text-base shadow-sm transition-colors;
   outline: none;
-  color: #1a1a2e;
+  color: #000000;
 }
 
 .input:focus {
@@ -181,13 +181,18 @@ html, body, #root {
 
 /* Placeholder */
 .input::placeholder {
-  color: #c5a880;
+  color: #000000;
   opacity: 0.8;
 }
 
 .input:focus::placeholder {
-  color: #1a1a2e;
+  color: #000000;
   opacity: 0.6;
+}
+
+/* Checkboxes */
+input[type="checkbox"] {
+  @apply h-4 w-4 rounded border-border bg-card text-primary focus:ring-primary focus:ring-offset-0;
 }
 
 /* Labels */

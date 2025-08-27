@@ -1,151 +1,111 @@
-import { Button } from "@/components/ui/button";
-import { Table, THead, TBody, TR, TH, TD } from "@/components/ui/table";
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { dataService } from '@/lib/dataService';
-import { uid } from '@/lib/utils';
-import { LinkAcesso } from "@/components/LinkAcesso";
-import { Copy, Send } from "lucide-react";
-import { Avaliacao, Resposta } from "@/lib/supabaseClient";
-
-interface RespostaComDados extends Resposta {
-  colaborador_nome: string;
-  colaborador_email: string;
-  teste_nome: string;
-}
-
-interface AvaliacaoComRespostas extends Avaliacao {
-  respostas: RespostaComDados[];
-}
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { motion } from "framer-motion";
+import { LinksAcesso } from "@/components/LinksAcesso";
+import { getLocalOrigin } from "@/utils/getLocalIP";
+import { Copy, Link as LinkIcon } from "lucide-react";
 
 export default function Avaliacoes() {
   const queryClient = useQueryClient();
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [selectedTests, setSelectedTests] = useState<string[]>([]);
-  const [selectedCols, setSelectedCols] = useState<string[]>([]);
-  const [expandedEvaluation, setExpandedEvaluation] = useState<string | null>(null);
+  const [generatedLinks, setGeneratedLinks] = useState<any[]>([]);
+  const [localOrigin, setLocalOrigin] = useState<string>('http://localhost:3001');
+  const [isGenerating, setIsGenerating] = useState(false);
+  
+  // Obter o IP local quando o componente montar
+  useEffect(() => {
+    getLocalOrigin().then(setLocalOrigin).catch(console.error);
+  }, []);
 
   // Buscar dados do Supabase
-  const { data: collaborators = [], isLoading: loadingCollaborators } = useQuery({
-    queryKey: ['colaboradores'],
-    queryFn: () => dataService.colaboradores.getAll()
-  });
-
-  const { data: tests = [], isLoading: loadingTests } = useQuery({
+  const { data: tests = [], isLoading: loadingTests, error: testsError } = useQuery({
     queryKey: ['testes'],
-    queryFn: () => dataService.testes.getAll()
-  });
-
-  const { data: evaluations = [], isLoading: loadingEvaluations } = useQuery({
-    queryKey: ['avaliacoes'],
-    queryFn: async () => {
-      const avaliacoes = await dataService.avaliacoes.getAll();
-      
-      // Para cada avaliação, buscar as respostas associadas
-      const avaliacoesComRespostas = await Promise.all(
-        avaliacoes.map(async (avaliacao) => {
-          const respostas = await dataService.respostas.getByAvaliacaoId(avaliacao.id);
-          
-          // Adicionar dados do colaborador e teste a cada resposta
-          const respostasComDados = await Promise.all(
-            respostas.map(async (resposta) => {
-              const colaborador = await dataService.colaboradores.getById(resposta.colaborador_id);
-              const teste = await dataService.testes.getById(resposta.teste_id);
-              
-              return {
-                ...resposta,
-                colaborador_nome: colaborador?.nome || "Colaborador",
-                colaborador_email: colaborador?.email || "",
-                teste_nome: teste?.nome || "Teste"
-              };
-            })
-          );
-          
-          return {
-            ...avaliacao,
-            respostas: respostasComDados
-          };
-        })
-      );
-      
-      return avaliacoesComRespostas;
+    queryFn: () => dataService.testes.getAll(),
+    onError: (error) => {
+      console.error('Erro ao buscar testes:', error);
     }
   });
 
-  // Mutation para criar avaliação
-  const createEvaluationMutation = useMutation({
+  // Função para alternar seleção de teste
+  const toggleTestSelection = (testId: string) => {
+    setSelectedTests(prev => 
+      prev.includes(testId) 
+        ? prev.filter(id => id !== testId) 
+        : [...prev, testId]
+    );
+  };
+
+  // Mutation para gerar links de acesso
+  const generateLinksMutation = useMutation({
     mutationFn: async () => {
-      if (!name || selectedTests.length === 0 || selectedCols.length === 0) {
-        throw new Error("Informe nome, ao menos 1 teste e 1 colaborador.");
+      if (selectedTests.length === 0) {
+        throw new Error("Selecione pelo menos um teste.");
       }
 
-      // Criar a avaliação
-      const avaliacao = await dataService.avaliacoes.create({
-        nome: name,
-        descricao: null,
-        criado_por: "usuário-logado-id", // TODO: Obter ID do usuário logado
-        testes_ids: selectedTests,
-        status: "rascunho"
-      });
-
-      // Criar respostas para cada colaborador
-      const respostasPromises = selectedCols.map(colaboradorId => {
-        return selectedTests.map(testeId => {
-          return dataService.respostas.create({
-            avaliacao_id: avaliacao.id,
-            colaborador_id: colaboradorId,
-            teste_id: testeId,
-            teste_versao: 1, // TODO: Obter versão correta do teste
-            respostas: null,
-            resultado: null
-          });
+      try {
+        setIsGenerating(true);
+        
+        // Criar a avaliação
+        const avaliacao = await dataService.avaliacoes.create({
+          nome: `Avaliação para ${email || 'candidato'}`,
+          descricao: null,
+          criado_por: null, // Não há usuário logado no single-tenant
+          testes_ids: selectedTests,
+          status: "enviada" // Marcar como enviada diretamente
         });
-      });
 
-      // Esperar todas as promessas
-      await Promise.all(respostasPromises.flat());
+        // Criar apenas UMA resposta para a avaliação inteira (não uma por teste)
+        // Usamos o primeiro teste como referência, mas todos os testes estarão disponíveis
+        const primeiraResposta = await dataService.respostas.create({
+          avaliacao_id: avaliacao.id,
+          colaborador_id: null, // Não há colaborador associado
+          teste_id: selectedTests[0], // Usamos o primeiro teste como referência
+          teste_versao: 1, // TODO: Obter versão correta do teste
+          respostas: null,
+          resultado: null
+        });
 
-      return avaliacao;
+        // Formatar link para exibição (apenas um link para todos os testes)
+        return [{
+          id: primeiraResposta.id,
+          testName: `${selectedTests.length} testes selecionados`,
+          link: `${localOrigin}/avaliacao/${primeiraResposta.link_acesso}`,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 dias a partir de agora
+        }];
+      } catch (error: any) {
+        console.error("Erro ao gerar links:", error);
+        throw new Error(error.message || "Erro ao gerar links. Verifique o console para mais detalhes.");
+      } finally {
+        setIsGenerating(false);
+      }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['avaliacoes'] });
-      setName("");
-      setSelectedTests([]);
-      setSelectedCols([]);
-      alert("Avaliação criada com sucesso!");
+    onSuccess: (links) => {
+      setGeneratedLinks(links);
+      alert("Links gerados com sucesso! Copie-os abaixo para enviar aos candidatos.");
     },
     onError: (error: any) => {
-      console.error("Erro ao criar avaliação:", error);
-      alert(error.message || "Erro ao criar avaliação. Verifique o console para mais detalhes.");
+      console.error("Erro ao gerar links:", error);
+      alert(error.message || "Erro ao gerar links. Verifique o console para mais detalhes.");
     }
   });
 
-  // Mutation para marcar avaliação como enviada
-  const sendEvaluationMutation = useMutation({
-    mutationFn: async (id: string) => {
-      return await dataService.avaliacoes.marcarComoEnviada(id);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['avaliacoes'] });
-      alert("Avaliação enviada com sucesso!");
-    },
-    onError: (error: any) => {
-      console.error("Erro ao enviar avaliação:", error);
-      alert(error.message || "Erro ao enviar avaliação. Verifique o console para mais detalhes.");
-    }
-  });
-
-  function toggle(list: string[], id: string, setter: (v: string[]) => void) {
-    setter(list.includes(id) ? list.filter(x => x !== id) : [...list, id]);
-  }
-
-  function toggleEvaluationDetails(id: string) {
-    setExpandedEvaluation(expandedEvaluation === id ? null : id);
-  }
+  // Função para copiar todos os links
+  const copyAllLinks = () => {
+    const linksText = generatedLinks.map(link => 
+      `${link.testName}: ${link.link}`
+    ).join('\n\n');
+    
+    navigator.clipboard.writeText(linksText);
+    alert("Todos os links foram copiados para a área de transferência!");
+  };
 
   // Mostrar loading enquanto carrega os dados
-  if (loadingCollaborators || loadingTests || loadingEvaluations) {
+  if (loadingTests) {
     return (
       <motion.div 
         initial={{ opacity: 0, y: 8 }} 
@@ -153,7 +113,29 @@ export default function Avaliacoes() {
         transition={{ duration: 0.25 }}
         className="p-10 text-center"
       >
-        Carregando avaliações...
+        Carregando testes...
+      </motion.div>
+    );
+  }
+
+  // Mostrar erro se houver problemas
+  if (testsError) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 8 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.25 }}
+        className="p-10 text-center"
+      >
+        <div className="text-red-500">
+          Erro ao carregar testes: {testsError?.message}
+        </div>
+        <Button 
+          onClick={() => window.location.reload()} 
+          className="mt-4"
+        >
+          Recarregar página
+        </Button>
       </motion.div>
     );
   }
@@ -161,137 +143,94 @@ export default function Avaliacoes() {
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
       <div className="grid gap-6">
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="md:col-span-1">
-            <h3 className="font-semibold mb-2">Nova avaliação</h3>
-            <div className="grid gap-2">
-              <input 
-                className="input-like" 
-                placeholder="Nome da avaliação" 
-                value={name} 
-                onChange={(e)=>setName(e.target.value)} 
-              />
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Seção de geração de links */}
+          <div className="border rounded-xl p-6">
+            <h2 className="text-xl font-semibold mb-4">Gerar Links para Testes</h2>
+            
+            <div className="grid gap-4">
               <div>
-                <div className="text-sm font-medium mb-1">Testes</div>
-                <div className="grid gap-1 max-h-40 overflow-auto border rounded-xl p-2">
-                  {tests.map(t => (
-                    <label key={t.id} className="flex items-center gap-2">
-                      <input 
-                        type="checkbox" 
-                        checked={selectedTests.includes(t.id)} 
-                        onChange={()=>toggle(selectedTests, t.id, setSelectedTests)} 
+                <Label>E-mail do candidato (opcional)</Label>
+                <Input 
+                  type="email" 
+                  placeholder="exemplo@candidato.com" 
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)} 
+                />
+              </div>
+              
+              <div>
+                <Label>Selecione os testes</Label>
+                <div className="border rounded-xl p-3 max-h-60 overflow-y-auto">
+                  {Array.isArray(tests) && tests.map(test => (
+                    <div key={test.id} className="flex items-center mb-2 last:mb-0">
+                      <input
+                        type="checkbox"
+                        id={`test-${test.id}`}
+                        checked={selectedTests.includes(test.id)}
+                        onChange={() => toggleTestSelection(test.id)}
+                        className="mr-2"
                       />
-                      <span>{t.nome}</span>
-                    </label>
+                      <label htmlFor={`test-${test.id}`} className="text-sm">
+                        {test.nome}
+                      </label>
+                    </div>
                   ))}
-                  {tests.length === 0 && <div className="text-xs text-muted-foreground">Nenhum teste.</div>}
+                  {(!Array.isArray(tests) || tests.length === 0) && (
+                    <div className="text-sm text-muted-foreground">
+                      Nenhum teste disponível
+                    </div>
+                  )}
                 </div>
               </div>
-              <div>
-                <div className="text-sm font-medium mb-1">Colaboradores</div>
-                <div className="grid gap-1 max-h-40 overflow-auto border rounded-xl p-2">
-                  {collaborators.map(c => (
-                    <label key={c.id} className="flex items-center gap-2">
-                      <input 
-                        type="checkbox" 
-                        checked={selectedCols.includes(c.id)} 
-                        onChange={()=>toggle(selectedCols, c.id, setSelectedCols)} 
-                      />
-                      <span>{c.nome} <span className="text-xs text-muted-foreground">&lt;{c.email}&gt;</span></span>
-                    </label>
-                  ))}
-                  {collaborators.length === 0 && <div className="text-xs text-muted-foreground">Nenhum colaborador.</div>}
-                </div>
-              </div>
+              
               <Button 
-                onClick={() => createEvaluationMutation.mutate()}
-                disabled={createEvaluationMutation.isPending}
+                onClick={() => generateLinksMutation.mutate()}
+                disabled={generateLinksMutation.isPending || isGenerating || selectedTests.length === 0}
+                className="w-full"
               >
-                {createEvaluationMutation.isPending ? 'Criando...' : 'Criar avaliação'}
+                {generateLinksMutation.isPending || isGenerating ? 'Gerando links...' : 'Gerar Links de Acesso'}
               </Button>
             </div>
-          </div>
-
-          <div className="md:col-span-2">
-            <h2 className="text-xl font-semibold mb-2">Avaliações</h2>
-            <div className="overflow-auto rounded-xl border">
-              <Table>
-                <THead>
-                  <TR>
-                    <TH>Nome</TH>
-                    <TH>Testes</TH>
-                    <TH>Status</TH>
-                    <TH className="text-right">Ações</TH>
-                  </TR>
-                </THead>
-                <TBody>
-                  {evaluations.map(ev => (
-                    <TR key={ev.id}>
-                      <TD>{ev.nome}</TD>
-                      <TD>{ev.testes_ids?.length || 0}</TD>
-                      <TD>
-                        <span className={`badge ${ev.status === 'rascunho' ? 'bg-yellow-500' : ev.status === 'enviada' ? 'bg-blue-500' : 'bg-green-500'}`}>
-                          {ev.status}
-                        </span>
-                      </TD>
-                      <TD className="text-right">
-                        <div className="flex justify-end gap-1">
-                          {ev.status === 'rascunho' && (
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              onClick={() => sendEvaluationMutation.mutate(ev.id)}
-                              disabled={sendEvaluationMutation.isPending}
-                            >
-                              <Send size={16} className="mr-1" />
-                              Enviar
-                            </Button>
-                          )}
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => toggleEvaluationDetails(ev.id)}
-                          >
-                            {expandedEvaluation === ev.id ? 'Ocultar' : 'Links'}
-                          </Button>
-                        </div>
-                      </TD>
-                    </TR>
-                  ))}
-                  {evaluations.length === 0 && <TR><TD colSpan={4} className="text-center py-6 text-muted-foreground">Nenhuma avaliação ainda.</TD></TR>}
-                </TBody>
-              </Table>
-              
-              {/* Detalhes das avaliações expandidas */}
-              {evaluations.map(ev => (
-                expandedEvaluation === ev.id && (
-                  <div key={`details-${ev.id}`} className="border-t border-border p-4 bg-muted">
-                    <h4 className="font-medium mb-3">Links de acesso para {ev.nome}:</h4>
-                    <div className="space-y-3">
-                      {ev.respostas.map(resposta => (
-                        <div key={resposta.id} className="grid gap-1">
-                          <div className="text-sm font-medium">
-                            {resposta.colaborador_nome} <span className="text-xs text-muted-foreground">&lt;{resposta.colaborador_email}&gt;</span>
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            Teste: {resposta.teste_nome}
-                          </div>
-                          <LinkAcesso 
-                            link={`${window.location.origin}/avaliacao/${resposta.link_acesso}`} 
-                            expiresAt={new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)} // 7 dias a partir de agora
-                          />
-                        </div>
-                      ))}
-                      {ev.respostas.length === 0 && (
-                        <div className="text-sm text-muted-foreground">
-                          Nenhum link de acesso gerado para esta avaliação.
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )
-              ))}
+            
+            {/* Mostrar o IP local para facilitar o acesso */}
+            <div className="mt-6 p-3 bg-muted rounded-lg border">
+              <h4 className="font-medium mb-2">Acesso para testes</h4>
+              <p className="text-sm text-muted-foreground">
+                Os links gerados apontam para:
+              </p>
+              <p className="mt-1 font-mono text-sm break-all">
+                {localOrigin}
+              </p>
             </div>
+          </div>
+          
+          {/* Seção de links gerados */}
+          <div className="border rounded-xl p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Links Gerados</h2>
+              {generatedLinks.length > 0 && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={copyAllLinks}
+                  className="flex items-center gap-1"
+                >
+                  <Copy size={16} />
+                  Copiar Todos
+                </Button>
+              )}
+            </div>
+            
+            {generatedLinks.length > 0 ? (
+              <LinksAcesso links={generatedLinks} />
+            ) : (
+              <div className="text-center py-10 text-muted-foreground">
+                <LinkIcon size={48} className="mx-auto mb-3 text-muted-foreground/30" />
+                <p>Nenhum link gerado ainda.</p>
+                <p className="text-sm mt-1">Selecione testes e clique em "Gerar Links de Acesso".</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

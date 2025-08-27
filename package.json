@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:network": "vite --host --port 3001",
     "build": "tsc -b && vite build",
     "preview": "vite preview"
   },
@@ -21,6 +22,7 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
     "lucide-react": "^0.453.0",
+    "nodemailer": "^7.0.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.0",
@@ -32,8 +34,10 @@
   },
   "devDependencies": {
     "@types/node": "^22.5.4",
+    "@types/nodemailer": "^7.0.1",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "@types/webrtc": "^0.0.46",
     "@vitejs/plugin-react": "^4.3.3",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.41",

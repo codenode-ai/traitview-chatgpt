@@ -2,7 +2,6 @@ import { Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import AppLayout from "@/components/layout/AppLayout";
 import Dashboard from "@/pages/Dashboard";
-import Colaboradores from "@/pages/Colaboradores";
 import Testes from "@/pages/Testes";
 import Avaliacoes from "@/pages/Avaliacoes";
 import Relatorios from "@/pages/Relatorios";
@@ -20,7 +19,6 @@ export default function App() {
     <Routes>
       <Route element={<AppLayout />}>
         <Route index element={<Dashboard />} />
-        <Route path="colaboradores" element={<Colaboradores />} />
         <Route path="testes" element={<Testes />} />
         <Route path="avaliacoes" element={<Avaliacoes />} />
         <Route path="relatorios" element={<Relatorios />} />
