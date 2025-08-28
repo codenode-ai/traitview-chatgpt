@@ -196,17 +196,6 @@ export default function Avaliacoes() {
                 {generateLinksMutation.isPending || isGenerating ? 'Gerando links...' : 'Gerar Links de Acesso'}
               </Button>
             </div>
-            
-            {/* Mostrar o IP local para facilitar o acesso */}
-            <div className="mt-6 p-3 bg-muted rounded-lg border">
-              <h4 className="font-medium mb-2">Acesso para testes</h4>
-              <p className="text-sm text-muted-foreground">
-                Os links gerados apontam para:
-              </p>
-              <p className="mt-1 font-mono text-sm break-all">
-                {localOrigin}
-              </p>
-            </div>
           </div>
           
           {/* Seção de links gerados */}

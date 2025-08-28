@@ -285,10 +285,6 @@ export default function Relatorios() {
             </TBody>
           </Table>
         </div>
-        
-        <p className="text-xs text-muted-foreground">
-          * Para PDF com mais fidelidade tipográfica, mover para renderização server-side no futuro.
-        </p>
       </div>
     </motion.div>
   );

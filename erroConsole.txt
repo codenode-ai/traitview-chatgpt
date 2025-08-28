@@ -1,245 +1,27 @@
-chunk-UPELNCPK.js?v=aec4b2b0:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+chunk-276SZO74.js?v=ae45eae1:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
 main.tsx:8 main.tsx: Inicializando aplicação...
-main.tsx:19 main.tsx: QueryClient criado _a8 {}
+main.tsx:19 main.tsx: QueryClient criado _a8
+Testes.tsx:18 Testes: Buscando testes...
 seedTestesOficiais.ts:8 Iniciando seed dos testes oficiais...
-react-router-dom.js?v=aec4b2b0:4393 ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
-warnOnce @ react-router-dom.js?v=aec4b2b0:4393
-logDeprecation @ react-router-dom.js?v=aec4b2b0:4396
-logV6DeprecationWarnings @ react-router-dom.js?v=aec4b2b0:4399
-(anonymous) @ react-router-dom.js?v=aec4b2b0:5271
-commitHookEffectListMount @ chunk-UPELNCPK.js?v=aec4b2b0:16915
-commitPassiveMountOnFiber @ chunk-UPELNCPK.js?v=aec4b2b0:18156
-commitPassiveMountEffects_complete @ chunk-UPELNCPK.js?v=aec4b2b0:18129
-commitPassiveMountEffects_begin @ chunk-UPELNCPK.js?v=aec4b2b0:18119
-commitPassiveMountEffects @ chunk-UPELNCPK.js?v=aec4b2b0:18109
-flushPassiveEffectsImpl @ chunk-UPELNCPK.js?v=aec4b2b0:19490
-flushPassiveEffects @ chunk-UPELNCPK.js?v=aec4b2b0:19447
-(anonymous) @ chunk-UPELNCPK.js?v=aec4b2b0:19328
-workLoop @ chunk-UPELNCPK.js?v=aec4b2b0:197
-flushWork @ chunk-UPELNCPK.js?v=aec4b2b0:176
-performWorkUntilDeadline @ chunk-UPELNCPK.js?v=aec4b2b0:384
-react-router-dom.js?v=aec4b2b0:4393 ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
-warnOnce @ react-router-dom.js?v=aec4b2b0:4393
-logDeprecation @ react-router-dom.js?v=aec4b2b0:4396
-logV6DeprecationWarnings @ react-router-dom.js?v=aec4b2b0:4402
-(anonymous) @ react-router-dom.js?v=aec4b2b0:5271
-commitHookEffectListMount @ chunk-UPELNCPK.js?v=aec4b2b0:16915
-commitPassiveMountOnFiber @ chunk-UPELNCPK.js?v=aec4b2b0:18156
-commitPassiveMountEffects_complete @ chunk-UPELNCPK.js?v=aec4b2b0:18129
-commitPassiveMountEffects_begin @ chunk-UPELNCPK.js?v=aec4b2b0:18119
-commitPassiveMountEffects @ chunk-UPELNCPK.js?v=aec4b2b0:18109
-flushPassiveEffectsImpl @ chunk-UPELNCPK.js?v=aec4b2b0:19490
-flushPassiveEffects @ chunk-UPELNCPK.js?v=aec4b2b0:19447
-(anonymous) @ chunk-UPELNCPK.js?v=aec4b2b0:19328
-workLoop @ chunk-UPELNCPK.js?v=aec4b2b0:197
-flushWork @ chunk-UPELNCPK.js?v=aec4b2b0:176
-performWorkUntilDeadline @ chunk-UPELNCPK.js?v=aec4b2b0:384
+react-router-dom.js?v=ae45eae1:4393 ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+warnOnce @ react-router-dom.js?v=ae45eae1:4393
+react-router-dom.js?v=ae45eae1:4393 ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+warnOnce @ react-router-dom.js?v=ae45eae1:4393
 seedTestesOficiais.ts:8 Iniciando seed dos testes oficiais...
+Testes.tsx:21 Testes: Testes encontrados: Array(12)
 seedTestesOficiais.ts:23 Testes oficiais já existem no banco de dados
-Relatorios.tsx:82 Uncaught TypeError: resposta.respostas.reduce is not a function
-    at Relatorios.tsx:82:42
-    at Array.map (<anonymous>)
-    at Relatorios (Relatorios.tsx:70:6)
-    at renderWithHooks (chunk-UPELNCPK.js?v=aec4b2b0:11548:26)
-    at updateFunctionComponent (chunk-UPELNCPK.js?v=aec4b2b0:14582:28)
-    at beginWork (chunk-UPELNCPK.js?v=aec4b2b0:15924:22)
-    at HTMLUnknownElement.callCallback2 (chunk-UPELNCPK.js?v=aec4b2b0:3674:22)
-    at Object.invokeGuardedCallbackDev (chunk-UPELNCPK.js?v=aec4b2b0:3699:24)
-    at invokeGuardedCallback (chunk-UPELNCPK.js?v=aec4b2b0:3733:39)
-    at beginWork$1 (chunk-UPELNCPK.js?v=aec4b2b0:19765:15)
-(anonymous) @ Relatorios.tsx:82
-Relatorios @ Relatorios.tsx:70
-renderWithHooks @ chunk-UPELNCPK.js?v=aec4b2b0:11548
-updateFunctionComponent @ chunk-UPELNCPK.js?v=aec4b2b0:14582
-beginWork @ chunk-UPELNCPK.js?v=aec4b2b0:15924
-callCallback2 @ chunk-UPELNCPK.js?v=aec4b2b0:3674
-invokeGuardedCallbackDev @ chunk-UPELNCPK.js?v=aec4b2b0:3699
-invokeGuardedCallback @ chunk-UPELNCPK.js?v=aec4b2b0:3733
-beginWork$1 @ chunk-UPELNCPK.js?v=aec4b2b0:19765
-performUnitOfWork @ chunk-UPELNCPK.js?v=aec4b2b0:19198
-workLoopSync @ chunk-UPELNCPK.js?v=aec4b2b0:19137
-renderRootSync @ chunk-UPELNCPK.js?v=aec4b2b0:19116
-performSyncWorkOnRoot @ chunk-UPELNCPK.js?v=aec4b2b0:18874
-flushSyncCallbacks @ chunk-UPELNCPK.js?v=aec4b2b0:9119
-(anonymous) @ chunk-UPELNCPK.js?v=aec4b2b0:18627
-setTimeout
-defaultScheduler @ @tanstack_react-query.js?v=aec4b2b0:560
-flush @ @tanstack_react-query.js?v=aec4b2b0:584
-batch @ @tanstack_react-query.js?v=aec4b2b0:602
-dispatch_fn @ @tanstack_react-query.js?v=aec4b2b0:1038
-setData @ @tanstack_react-query.js?v=aec4b2b0:713
-fetch @ @tanstack_react-query.js?v=aec4b2b0:927
-await in fetch
-executeFetch_fn @ @tanstack_react-query.js?v=aec4b2b0:2280
-onSubscribe @ @tanstack_react-query.js?v=aec4b2b0:1976
-subscribe @ @tanstack_react-query.js?v=aec4b2b0:24
-(anonymous) @ @tanstack_react-query.js?v=aec4b2b0:3147
-subscribeToStore @ chunk-UPELNCPK.js?v=aec4b2b0:11984
-commitHookEffectListMount @ chunk-UPELNCPK.js?v=aec4b2b0:16915
-commitPassiveMountOnFiber @ chunk-UPELNCPK.js?v=aec4b2b0:18156
-commitPassiveMountEffects_complete @ chunk-UPELNCPK.js?v=aec4b2b0:18129
-commitPassiveMountEffects_begin @ chunk-UPELNCPK.js?v=aec4b2b0:18119
-commitPassiveMountEffects @ chunk-UPELNCPK.js?v=aec4b2b0:18109
-flushPassiveEffectsImpl @ chunk-UPELNCPK.js?v=aec4b2b0:19490
-flushPassiveEffects @ chunk-UPELNCPK.js?v=aec4b2b0:19447
-(anonymous) @ chunk-UPELNCPK.js?v=aec4b2b0:19328
-workLoop @ chunk-UPELNCPK.js?v=aec4b2b0:197
-flushWork @ chunk-UPELNCPK.js?v=aec4b2b0:176
-performWorkUntilDeadline @ chunk-UPELNCPK.js?v=aec4b2b0:384
-Relatorios.tsx:82 Uncaught TypeError: resposta.respostas.reduce is not a function
-    at Relatorios.tsx:82:42
-    at Array.map (<anonymous>)
-    at Relatorios (Relatorios.tsx:70:6)
-    at renderWithHooks (chunk-UPELNCPK.js?v=aec4b2b0:11548:26)
-    at updateFunctionComponent (chunk-UPELNCPK.js?v=aec4b2b0:14582:28)
-    at beginWork (chunk-UPELNCPK.js?v=aec4b2b0:15924:22)
-    at HTMLUnknownElement.callCallback2 (chunk-UPELNCPK.js?v=aec4b2b0:3674:22)
-    at Object.invokeGuardedCallbackDev (chunk-UPELNCPK.js?v=aec4b2b0:3699:24)
-    at invokeGuardedCallback (chunk-UPELNCPK.js?v=aec4b2b0:3733:39)
-    at beginWork$1 (chunk-UPELNCPK.js?v=aec4b2b0:19765:15)
-(anonymous) @ Relatorios.tsx:82
-Relatorios @ Relatorios.tsx:70
-renderWithHooks @ chunk-UPELNCPK.js?v=aec4b2b0:11548
-updateFunctionComponent @ chunk-UPELNCPK.js?v=aec4b2b0:14582
-beginWork @ chunk-UPELNCPK.js?v=aec4b2b0:15924
-callCallback2 @ chunk-UPELNCPK.js?v=aec4b2b0:3674
-invokeGuardedCallbackDev @ chunk-UPELNCPK.js?v=aec4b2b0:3699
-invokeGuardedCallback @ chunk-UPELNCPK.js?v=aec4b2b0:3733
-beginWork$1 @ chunk-UPELNCPK.js?v=aec4b2b0:19765
-performUnitOfWork @ chunk-UPELNCPK.js?v=aec4b2b0:19198
-workLoopSync @ chunk-UPELNCPK.js?v=aec4b2b0:19137
-renderRootSync @ chunk-UPELNCPK.js?v=aec4b2b0:19116
-recoverFromConcurrentError @ chunk-UPELNCPK.js?v=aec4b2b0:18736
-performSyncWorkOnRoot @ chunk-UPELNCPK.js?v=aec4b2b0:18879
-flushSyncCallbacks @ chunk-UPELNCPK.js?v=aec4b2b0:9119
-(anonymous) @ chunk-UPELNCPK.js?v=aec4b2b0:18627
-setTimeout
-defaultScheduler @ @tanstack_react-query.js?v=aec4b2b0:560
-flush @ @tanstack_react-query.js?v=aec4b2b0:584
-batch @ @tanstack_react-query.js?v=aec4b2b0:602
-dispatch_fn @ @tanstack_react-query.js?v=aec4b2b0:1038
-setData @ @tanstack_react-query.js?v=aec4b2b0:713
-fetch @ @tanstack_react-query.js?v=aec4b2b0:927
-await in fetch
-executeFetch_fn @ @tanstack_react-query.js?v=aec4b2b0:2280
-onSubscribe @ @tanstack_react-query.js?v=aec4b2b0:1976
-subscribe @ @tanstack_react-query.js?v=aec4b2b0:24
-(anonymous) @ @tanstack_react-query.js?v=aec4b2b0:3147
-subscribeToStore @ chunk-UPELNCPK.js?v=aec4b2b0:11984
-commitHookEffectListMount @ chunk-UPELNCPK.js?v=aec4b2b0:16915
-commitPassiveMountOnFiber @ chunk-UPELNCPK.js?v=aec4b2b0:18156
-commitPassiveMountEffects_complete @ chunk-UPELNCPK.js?v=aec4b2b0:18129
-commitPassiveMountEffects_begin @ chunk-UPELNCPK.js?v=aec4b2b0:18119
-commitPassiveMountEffects @ chunk-UPELNCPK.js?v=aec4b2b0:18109
-flushPassiveEffectsImpl @ chunk-UPELNCPK.js?v=aec4b2b0:19490
-flushPassiveEffects @ chunk-UPELNCPK.js?v=aec4b2b0:19447
-(anonymous) @ chunk-UPELNCPK.js?v=aec4b2b0:19328
-workLoop @ chunk-UPELNCPK.js?v=aec4b2b0:197
-flushWork @ chunk-UPELNCPK.js?v=aec4b2b0:176
-performWorkUntilDeadline @ chunk-UPELNCPK.js?v=aec4b2b0:384
-chunk-UPELNCPK.js?v=aec4b2b0:14032 The above error occurred in the <Relatorios> component:
-
-    at Relatorios (http://localhost:3000/src/pages/Relatorios.tsx?t=1756336155359:31:15)
-    at RenderedRoute (http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=aec4b2b0:4088:5)
-    at Outlet (http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=aec4b2b0:4494:26)
-    at div
-    at div
-    at MotionComponent (http://localhost:3000/node_modules/.vite/deps/framer-motion.js?v=aec4b2b0:945:40)
-    at div
-    at main
-    at AppLayout
-    at RenderedRoute (http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=aec4b2b0:4088:5)
-    at Routes (http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=aec4b2b0:4558:5)
-    at App (http://localhost:3000/src/App.tsx?t=1756336155359:31:3)
-    at Router (http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=aec4b2b0:4501:15)
-    at BrowserRouter (http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=aec4b2b0:5247:5)
-    at QueryClientProvider (http://localhost:3000/node_modules/.vite/deps/@tanstack_react-query.js?v=aec4b2b0:2934:3)
-
-Consider adding an error boundary to your tree to customize error handling behavior.
-Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
-logCapturedError @ chunk-UPELNCPK.js?v=aec4b2b0:14032
-update.callback @ chunk-UPELNCPK.js?v=aec4b2b0:14052
-callCallback @ chunk-UPELNCPK.js?v=aec4b2b0:11248
-commitUpdateQueue @ chunk-UPELNCPK.js?v=aec4b2b0:11265
-commitLayoutEffectOnFiber @ chunk-UPELNCPK.js?v=aec4b2b0:17093
-commitLayoutMountEffects_complete @ chunk-UPELNCPK.js?v=aec4b2b0:17980
-commitLayoutEffects_begin @ chunk-UPELNCPK.js?v=aec4b2b0:17969
-commitLayoutEffects @ chunk-UPELNCPK.js?v=aec4b2b0:17920
-commitRootImpl @ chunk-UPELNCPK.js?v=aec4b2b0:19353
-commitRoot @ chunk-UPELNCPK.js?v=aec4b2b0:19277
-performSyncWorkOnRoot @ chunk-UPELNCPK.js?v=aec4b2b0:18895
-flushSyncCallbacks @ chunk-UPELNCPK.js?v=aec4b2b0:9119
-(anonymous) @ chunk-UPELNCPK.js?v=aec4b2b0:18627
-setTimeout
-defaultScheduler @ @tanstack_react-query.js?v=aec4b2b0:560
-flush @ @tanstack_react-query.js?v=aec4b2b0:584
-batch @ @tanstack_react-query.js?v=aec4b2b0:602
-dispatch_fn @ @tanstack_react-query.js?v=aec4b2b0:1038
-setData @ @tanstack_react-query.js?v=aec4b2b0:713
-fetch @ @tanstack_react-query.js?v=aec4b2b0:927
-await in fetch
-executeFetch_fn @ @tanstack_react-query.js?v=aec4b2b0:2280
-onSubscribe @ @tanstack_react-query.js?v=aec4b2b0:1976
-subscribe @ @tanstack_react-query.js?v=aec4b2b0:24
-(anonymous) @ @tanstack_react-query.js?v=aec4b2b0:3147
-subscribeToStore @ chunk-UPELNCPK.js?v=aec4b2b0:11984
-commitHookEffectListMount @ chunk-UPELNCPK.js?v=aec4b2b0:16915
-commitPassiveMountOnFiber @ chunk-UPELNCPK.js?v=aec4b2b0:18156
-commitPassiveMountEffects_complete @ chunk-UPELNCPK.js?v=aec4b2b0:18129
-commitPassiveMountEffects_begin @ chunk-UPELNCPK.js?v=aec4b2b0:18119
-commitPassiveMountEffects @ chunk-UPELNCPK.js?v=aec4b2b0:18109
-flushPassiveEffectsImpl @ chunk-UPELNCPK.js?v=aec4b2b0:19490
-flushPassiveEffects @ chunk-UPELNCPK.js?v=aec4b2b0:19447
-(anonymous) @ chunk-UPELNCPK.js?v=aec4b2b0:19328
-workLoop @ chunk-UPELNCPK.js?v=aec4b2b0:197
-flushWork @ chunk-UPELNCPK.js?v=aec4b2b0:176
-performWorkUntilDeadline @ chunk-UPELNCPK.js?v=aec4b2b0:384
-chunk-UPELNCPK.js?v=aec4b2b0:9129 Uncaught TypeError: resposta.respostas.reduce is not a function
-    at Relatorios.tsx:82:42
-    at Array.map (<anonymous>)
-    at Relatorios (Relatorios.tsx:70:6)
-    at renderWithHooks (chunk-UPELNCPK.js?v=aec4b2b0:11548:26)
-    at updateFunctionComponent (chunk-UPELNCPK.js?v=aec4b2b0:14582:28)
-    at beginWork (chunk-UPELNCPK.js?v=aec4b2b0:15924:22)
-    at beginWork$1 (chunk-UPELNCPK.js?v=aec4b2b0:19753:22)
-    at performUnitOfWork (chunk-UPELNCPK.js?v=aec4b2b0:19198:20)
-    at workLoopSync (chunk-UPELNCPK.js?v=aec4b2b0:19137:13)
-    at renderRootSync (chunk-UPELNCPK.js?v=aec4b2b0:19116:15)
-(anonymous) @ Relatorios.tsx:82
-Relatorios @ Relatorios.tsx:70
-renderWithHooks @ chunk-UPELNCPK.js?v=aec4b2b0:11548
-updateFunctionComponent @ chunk-UPELNCPK.js?v=aec4b2b0:14582
-beginWork @ chunk-UPELNCPK.js?v=aec4b2b0:15924
-beginWork$1 @ chunk-UPELNCPK.js?v=aec4b2b0:19753
-performUnitOfWork @ chunk-UPELNCPK.js?v=aec4b2b0:19198
-workLoopSync @ chunk-UPELNCPK.js?v=aec4b2b0:19137
-renderRootSync @ chunk-UPELNCPK.js?v=aec4b2b0:19116
-recoverFromConcurrentError @ chunk-UPELNCPK.js?v=aec4b2b0:18736
-performSyncWorkOnRoot @ chunk-UPELNCPK.js?v=aec4b2b0:18879
-flushSyncCallbacks @ chunk-UPELNCPK.js?v=aec4b2b0:9119
-(anonymous) @ chunk-UPELNCPK.js?v=aec4b2b0:18627
-setTimeout
-defaultScheduler @ @tanstack_react-query.js?v=aec4b2b0:560
-flush @ @tanstack_react-query.js?v=aec4b2b0:584
-batch @ @tanstack_react-query.js?v=aec4b2b0:602
-dispatch_fn @ @tanstack_react-query.js?v=aec4b2b0:1038
-setData @ @tanstack_react-query.js?v=aec4b2b0:713
-fetch @ @tanstack_react-query.js?v=aec4b2b0:927
-await in fetch
-executeFetch_fn @ @tanstack_react-query.js?v=aec4b2b0:2280
-onSubscribe @ @tanstack_react-query.js?v=aec4b2b0:1976
-subscribe @ @tanstack_react-query.js?v=aec4b2b0:24
-(anonymous) @ @tanstack_react-query.js?v=aec4b2b0:3147
-subscribeToStore @ chunk-UPELNCPK.js?v=aec4b2b0:11984
-commitHookEffectListMount @ chunk-UPELNCPK.js?v=aec4b2b0:16915
-commitPassiveMountOnFiber @ chunk-UPELNCPK.js?v=aec4b2b0:18156
-commitPassiveMountEffects_complete @ chunk-UPELNCPK.js?v=aec4b2b0:18129
-commitPassiveMountEffects_begin @ chunk-UPELNCPK.js?v=aec4b2b0:18119
-commitPassiveMountEffects @ chunk-UPELNCPK.js?v=aec4b2b0:18109
-flushPassiveEffectsImpl @ chunk-UPELNCPK.js?v=aec4b2b0:19490
-flushPassiveEffects @ chunk-UPELNCPK.js?v=aec4b2b0:19447
-(anonymous) @ chunk-UPELNCPK.js?v=aec4b2b0:19328
-workLoop @ chunk-UPELNCPK.js?v=aec4b2b0:197
-flushWork @ chunk-UPELNCPK.js?v=aec4b2b0:176
-performWorkUntilDeadline @ chunk-UPELNCPK.js?v=aec4b2b0:384
 seedTestesOficiais.ts:23 Testes oficiais já existem no banco de dados
+Testes.tsx:18 Testes: Buscando testes...
+Testes.tsx:21 Testes: Testes encontrados: Array(12)
+Testes.tsx:70 Erro ao verificar respostas: TypeError: dataService.respostas.getByTestId is not a function
+    at handleDeleteTest (Testes.tsx:54:88)
+    at onClick (Testes.tsx:128:40)
+    at HTMLUnknownElement.callCallback2 (chunk-276SZO74.js?v=ae45eae1:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-276SZO74.js?v=ae45eae1:3699:24)
+    at invokeGuardedCallback (chunk-276SZO74.js?v=ae45eae1:3733:39)
+    at invokeGuardedCallbackAndCatchFirstError (chunk-276SZO74.js?v=ae45eae1:3736:33)
+    at executeDispatch (chunk-276SZO74.js?v=ae45eae1:7014:11)
+    at processDispatchQueueItemsInOrder (chunk-276SZO74.js?v=ae45eae1:7034:15)
+    at processDispatchQueue (chunk-276SZO74.js?v=ae45eae1:7043:13)
+    at dispatchEventsForPlugins (chunk-276SZO74.js?v=ae45eae1:7051:11)
+handleDeleteTest @ Testes.tsx:70

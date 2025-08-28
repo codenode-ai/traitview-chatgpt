@@ -1,0 +1,14 @@
+  // Obter respostas por teste ID
+  async getByTestId(testeId: string): Promise<Resposta[]> {
+    const { data, error } = await supabase
+      .from('respostas')
+      .select('*')
+      .eq('teste_id', testeId)
+    
+    if (error) {
+      console.error('Erro ao buscar respostas por teste ID:', error);
+      throw error;
+    }
+    
+    return data || [];
+  },
