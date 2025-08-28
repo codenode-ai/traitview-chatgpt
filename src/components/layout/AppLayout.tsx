@@ -1,5 +1,4 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { BarChart3, ClipboardList, ListChecks, PieChart } from "lucide-react";
 import { motion } from "framer-motion";
 import { defaultUser } from "@/lib/defaultUser";
@@ -9,8 +8,7 @@ export default function AppLayout() {
     <>
       <aside className="sidebar">
         <div className="p-6">
-          <div className="text-2xl font-extrabold mb-1"><span className="text-white">Trait</span><span className="text-vibrant-blue">View</span></div>
-          <p className="text-xs text-dark-text-secondary mb-6">Completo • single-tenant</p>
+          <div className="text-2xl font-extrabold mb-6"><span className="text-white">Trait</span><span className="text-vibrant-blue">View</span></div>
           <nav className="flex flex-col gap-1">
             <NavLink to="/" className="navlink" end>
               <BarChart3 size={20}/> 
@@ -34,16 +32,7 @@ export default function AppLayout() {
       <main className="main">
         <header className="header">
           <div className="container-page flex items-center justify-between">
-            <div className="font-semibold text-foreground">TraitView • MVP (Single-Tenant)</div>
-            <div className="flex gap-2">
-              <Button 
-                onClick={() => { localStorage.clear(); location.reload(); }} 
-                variant="outline" 
-                className="border-border text-foreground hover:bg-muted"
-              >
-                Resetar Dados
-              </Button>
-            </div>
+            <div className="font-semibold text-foreground">TraitView - Plataforma de Avaliação</div>
           </div>
         </header>
         <div className="container-page py-6">
