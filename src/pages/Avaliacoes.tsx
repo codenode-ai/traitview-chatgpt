@@ -1,105 +1,229 @@
-import { useDB } from "@/stores/db";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { dataService } from '@/lib/dataService';
 import { Button } from "@/components/ui/button";
-import { Table, THead, TBody, TR, TH, TD } from "@/components/ui/table";
-import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
+import { LinksAcesso } from "@/components/LinksAcesso";
+import { getLocalOrigin } from "@/utils/getLocalIP";
+import { Copy, Link as LinkIcon } from "lucide-react";
 
 export default function Avaliacoes() {
-  const collaborators = useDB(s => s.collaborators);
-  const tests = useDB(s => s.tests);
-  const evaluations = useDB(s => s.evaluations);
-  const createEvaluation = useDB(s => s.createEvaluation);
-
-  const [name, setName] = useState("");
+  const queryClient = useQueryClient();
+  const [email, setEmail] = useState("");
   const [selectedTests, setSelectedTests] = useState<string[]>([]);
-  const [selectedCols, setSelectedCols] = useState<string[]>([]);
+  const [generatedLinks, setGeneratedLinks] = useState<any[]>([]);
+  const [localOrigin, setLocalOrigin] = useState<string>('http://localhost:3001');
+  const [isGenerating, setIsGenerating] = useState(false);
+  
+  // Obter o IP local quando o componente montar
+  useEffect(() => {
+    getLocalOrigin().then(setLocalOrigin).catch(console.error);
+  }, []);
 
-  function toggle(list: string[], id: string, setter: (v: string[]) => void) {
-    setter(list.includes(id) ? list.filter(x => x !== id) : [...list, id]);
+  // Buscar dados do Supabase
+  const { data: tests = [], isLoading: loadingTests, error: testsError } = useQuery({
+    queryKey: ['testes'],
+    queryFn: () => dataService.testes.getAll(),
+    onError: (error) => {
+      console.error('Erro ao buscar testes:', error);
+    }
+  });
+
+  // Função para alternar seleção de teste
+  const toggleTestSelection = (testId: string) => {
+    setSelectedTests(prev => 
+      prev.includes(testId) 
+        ? prev.filter(id => id !== testId) 
+        : [...prev, testId]
+    );
+  };
+
+  // Mutation para gerar links de acesso
+  const generateLinksMutation = useMutation({
+    mutationFn: async () => {
+      if (selectedTests.length === 0) {
+        throw new Error("Selecione pelo menos um teste.");
+      }
+
+      try {
+        setIsGenerating(true);
+        
+        // Criar a avaliação
+        const avaliacao = await dataService.avaliacoes.create({
+          nome: `Avaliação para ${email || 'candidato'}`,
+          descricao: null,
+          criado_por: null, // Não há usuário logado no single-tenant
+          testes_ids: selectedTests,
+          status: "enviada" // Marcar como enviada diretamente
+        });
+
+        // Criar respostas para cada teste selecionado
+        const respostasPromises = selectedTests.map(testeId => 
+          dataService.respostas.create({
+            avaliacao_id: avaliacao.id,
+            colaborador_id: null, // Não há colaborador associado
+            teste_id: testeId,
+            teste_versao: 1, // TODO: Obter versão correta do teste
+            respostas: null,
+            resultado: null
+          })
+        );
+
+        const respostas = await Promise.all(respostasPromises);
+
+        // Formatar links para exibição (apenas um link para todos os testes)
+        // Usamos o link da primeira resposta, mas todas as respostas estão associadas à mesma avaliação
+        return [{
+          id: respostas[0].id,
+          testName: `${selectedTests.length} testes selecionados`,
+          link: `${localOrigin}/avaliacao/${respostas[0].link_acesso}`,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 dias a partir de agora
+        }];
+      } catch (error: any) {
+        console.error("Erro ao gerar links:", error);
+        throw new Error(error.message || "Erro ao gerar links. Verifique o console para mais detalhes.");
+      } finally {
+        setIsGenerating(false);
+      }
+    },
+    onSuccess: (links) => {
+      setGeneratedLinks(links);
+      alert("Links gerados com sucesso! Copie-os abaixo para enviar aos candidatos.");
+    },
+    onError: (error: any) => {
+      console.error("Erro ao gerar links:", error);
+      alert(error.message || "Erro ao gerar links. Verifique o console para mais detalhes.");
+    }
+  });
+
+  // Função para copiar todos os links
+  const copyAllLinks = () => {
+    const linksText = generatedLinks.map(link => 
+      `${link.testName}: ${link.link}`
+    ).join('\n\n');
+    
+    navigator.clipboard.writeText(linksText);
+    alert("Todos os links foram copiados para a área de transferência!");
+  };
+
+  // Mostrar loading enquanto carrega os dados
+  if (loadingTests) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 8 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.25 }}
+        className="p-10 text-center"
+      >
+        Carregando testes...
+      </motion.div>
+    );
   }
 
-  function create() {
-    if (!name || selectedTests.length === 0 || selectedCols.length === 0) {
-      alert("Informe nome, ao menos 1 teste e 1 colaborador.");
-      return;
-    }
-    const id = createEvaluation(name, selectedTests, selectedCols);
-    const ev = evaluations.find(e => e.id === id);
-    if (ev) alert("Avaliação criada! Links gerados na tabela abaixo.");
-    setName("");
-    setSelectedTests([]);
-    setSelectedCols([]);
+  // Mostrar erro se houver problemas
+  if (testsError) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 8 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.25 }}
+        className="p-10 text-center"
+      >
+        <div className="text-red-500">
+          Erro ao carregar testes: {testsError?.message}
+        </div>
+        <Button 
+          onClick={() => window.location.reload()} 
+          className="mt-4"
+        >
+          Recarregar página
+        </Button>
+      </motion.div>
+    );
   }
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
       <div className="grid gap-6">
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="md:col-span-1">
-            <h3 className="font-semibold mb-2">Nova avaliação</h3>
-            <div className="grid gap-2">
-              <input className="input-like" placeholder="Nome da avaliação" value={name} onChange={(e)=>setName(e.target.value)} />
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Seção de geração de links */}
+          <div className="border rounded-xl p-6">
+            <h2 className="text-xl font-semibold mb-4">Gerar Links para Testes</h2>
+            
+            <div className="grid gap-4">
               <div>
-                <div className="text-sm font-medium mb-1">Testes</div>
-                <div className="grid gap-1 max-h-40 overflow-auto border rounded-xl p-2">
-                  {tests.map(t => (
-                    <label key={t.id} className="flex items-center gap-2">
-                      <input type="checkbox" checked={selectedTests.includes(t.id)} onChange={()=>toggle(selectedTests, t.id, setSelectedTests)} />
-                      <span>{t.name}</span>
-                    </label>
+                <Label>E-mail do candidato (opcional)</Label>
+                <Input 
+                  type="email" 
+                  placeholder="exemplo@candidato.com" 
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)} 
+                />
+              </div>
+              
+              <div>
+                <Label>Selecione os testes</Label>
+                <div className="border rounded-xl p-3 max-h-60 overflow-y-auto">
+                  {Array.isArray(tests) && tests.map(test => (
+                    <div key={test.id} className="flex items-center mb-2 last:mb-0">
+                      <input
+                        type="checkbox"
+                        id={`test-${test.id}`}
+                        checked={selectedTests.includes(test.id)}
+                        onChange={() => toggleTestSelection(test.id)}
+                        className="mr-2"
+                      />
+                      <label htmlFor={`test-${test.id}`} className="text-sm">
+                        {test.nome}
+                      </label>
+                    </div>
                   ))}
-                  {tests.length === 0 && <div className="text-xs text-muted-foreground">Nenhum teste.</div>}
+                  {(!Array.isArray(tests) || tests.length === 0) && (
+                    <div className="text-sm text-muted-foreground">
+                      Nenhum teste disponível
+                    </div>
+                  )}
                 </div>
               </div>
-              <div>
-                <div className="text-sm font-medium mb-1">Colaboradores</div>
-                <div className="grid gap-1 max-h-40 overflow-auto border rounded-xl p-2">
-                  {collaborators.map(c => (
-                    <label key={c.id} className="flex items-center gap-2">
-                      <input type="checkbox" checked={selectedCols.includes(c.id)} onChange={()=>toggle(selectedCols, c.id, setSelectedCols)} />
-                      <span>{c.name} <span className="text-xs text-muted-foreground">&lt;{c.email}&gt;</span></span>
-                    </label>
-                  ))}
-                  {collaborators.length === 0 && <div className="text-xs text-muted-foreground">Nenhum colaborador.</div>}
-                </div>
-              </div>
-              <Button onClick={create}>Criar avaliação</Button>
+              
+              <Button 
+                onClick={() => generateLinksMutation.mutate()}
+                disabled={generateLinksMutation.isPending || isGenerating || selectedTests.length === 0}
+                className="w-full"
+              >
+                {generateLinksMutation.isPending || isGenerating ? 'Gerando links...' : 'Gerar Links de Acesso'}
+              </Button>
             </div>
           </div>
-
-          <div className="md:col-span-2">
-            <h2 className="text-xl font-semibold mb-2">Avaliações</h2>
-            <div className="overflow-auto rounded-xl border">
-              <Table>
-                <THead>
-                  <TR>
-                    <TH>Nome</TH>
-                    <TH>Testes</TH>
-                    <TH>Gerados</TH>
-                    <TH>Links</TH>
-                  </TR>
-                </THead>
-                <TBody>
-                  {evaluations.map(ev => (
-                    <TR key={ev.id}>
-                      <TD>{ev.name}</TD>
-                      <TD>{ev.testIds.length}</TD>
-                      <TD>{ev.links.length}</TD>
-                      <TD className="space-y-1">
-                        {ev.links.map(l => (
-                          <div key={l.token} className="flex items-center gap-2">
-                            <span className="badge">{l.status}</span>
-                            <Button variant="outline" onClick={()=>window.open(`/avaliacao/${l.token}`, "_blank")}>Abrir</Button>
-                            <code className="text-xs">{location.origin}/avaliacao/{l.token}</code>
-                          </div>
-                        ))}
-                      </TD>
-                    </TR>
-                  ))}
-                  {evaluations.length === 0 && <TR><TD colSpan={4} className="text-center py-6 text-muted-foreground">Nenhuma avaliação ainda.</TD></TR>}
-                </TBody>
-              </Table>
+          
+          {/* Seção de links gerados */}
+          <div className="border rounded-xl p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Links Gerados</h2>
+              {generatedLinks.length > 0 && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={copyAllLinks}
+                  className="flex items-center gap-1"
+                >
+                  <Copy size={16} />
+                  Copiar Todos
+                </Button>
+              )}
             </div>
+            
+            {generatedLinks.length > 0 ? (
+              <LinksAcesso links={generatedLinks} />
+            ) : (
+              <div className="text-center py-10 text-muted-foreground">
+                <LinkIcon size={48} className="mx-auto mb-3 text-muted-foreground/30" />
+                <p>Nenhum link gerado ainda.</p>
+                <p className="text-sm mt-1">Selecione testes e clique em "Gerar Links de Acesso".</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

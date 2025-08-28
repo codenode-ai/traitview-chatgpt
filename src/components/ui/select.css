@@ -1,0 +1,27 @@
+/* Select Components */
+.select-trigger {
+  background-color: #ffffff;
+  color: #000000;
+  border-color: var(--border);
+}
+
+.select-content {
+  background-color: #ffffff;
+  color: #000000;
+  border-color: var(--border);
+}
+
+.select-item {
+  color: #000000;
+  background-color: #ffffff;
+}
+
+.select-item:hover {
+  background-color: #f0f0f0;
+  color: #000000;
+}
+
+.select-item:focus {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
