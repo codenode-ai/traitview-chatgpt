@@ -5,8 +5,8 @@ const source = import.meta.env.VITE_DATA_SOURCE ?? "local";
 
 export async function getSource() {
   if (source === "supabase") {
-    const m = await import("./supabase");
-    return m.api;
+    // Supabase foi removido, usar dataService diretamente
+    throw new Error("Supabase source not available");
   }
   const m = await import("./local");
   return m.api;
