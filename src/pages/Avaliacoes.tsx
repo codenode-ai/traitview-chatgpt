@@ -25,10 +25,7 @@ export default function Avaliacoes() {
   // Buscar dados do Supabase
   const { data: tests = [], isLoading: loadingTests, error: testsError } = useQuery({
     queryKey: ['testes'],
-    queryFn: () => dataService.testes.getAll(),
-    onError: (error) => {
-      console.error('Erro ao buscar testes:', error);
-    }
+    queryFn: () => dataService.testes.getAll()
   });
 
   // Função para alternar seleção de teste
@@ -55,9 +52,12 @@ export default function Avaliacoes() {
           nome: `Avaliação para ${email || 'candidato'}`,
           descricao: null,
           criado_por: null, // Não há usuário logado no single-tenant
-          testes_ids: selectedTests,
-          status: "enviada" // Marcar como enviada diretamente
+          testes_ids: selectedTests
+          // status será 'rascunho' por padrão, atualizaremos depois
         });
+
+        // Atualizar status para 'enviada'
+        await dataService.avaliacoes.update(avaliacao.id, { status: 'enviada' });
 
         // Criar respostas para cada teste selecionado
         const respostasPromises = selectedTests.map(testeId => 

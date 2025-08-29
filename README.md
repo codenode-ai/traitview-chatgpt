@@ -2,14 +2,58 @@
 
 App React + Vite + TS com Tailwind, UI local estilo shadcn, React Query, RHF + Zod, Recharts, **Framer Motion** (animações) e **Exportar PDF** (html2canvas + jsPDF). **Agora com integração completa com Supabase** — dados são armazenados no banco de dados com autenticação e controle de acesso.
 
-## Rodando localmente
+## 🚀 Deploy Rápido na Vercel
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/seu-usuario/traitview)
+
+## 🔧 Configuração Local
+
+### Rodando localmente
 ```bash
 npm i
 npm run dev
 # abre http://localhost:3000
 ```
 
-## Fluxo de teste rápido
+### Variáveis de Ambiente
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+```
+VITE_SUPABASE_URL=sua_url_do_supabase
+VITE_SUPABASE_ANON_KEY=sua_chave_anonima_do_supabase
+```
+
+## ☁️ Deploy na Vercel
+
+### Método 1: CLI da Vercel (Recomendado)
+```bash
+# Instale a CLI da Vercel (se ainda não tiver)
+npm i -g vercel
+
+# Faça login na Vercel
+vercel login
+
+# Faça o deploy
+vercel --prod
+```
+
+### Método 2: Scripts Automatizados
+```bash
+# No Windows
+deploy.bat
+
+# No Linux/Mac
+chmod +x deploy.sh
+./deploy.sh
+```
+
+### Método 3: Manual via Dashboard
+1. Acesse [vercel.com](https://vercel.com)
+2. Crie uma nova projeto
+3. Conecte seu repositório Git
+4. Configure as variáveis de ambiente
+5. Faça o deploy
+
+## 📋 Fluxo de teste rápido
 1. Acesse a aplicação e crie uma conta no formulário de login
 2. Faça login na aplicação
 3. Importe colaboradores via CSV ou crie manualmente
@@ -17,6 +61,28 @@ npm run dev
 5. Envie os links gerados para os colaboradores
 6. Os colaboradores acessam o link e respondem aos testes
 7. Veja os relatórios na aba "Relatórios"
+
+## 🛠️ Tecnologias utilizadas
+- React 18 + TypeScript
+- Vite como bundler
+- TailwindCSS para estilização
+- Supabase como backend
+- React Query para gerenciamento de estado
+- Recharts para visualização de dados
+- Framer Motion para animações
+- Zod para validação de formulários
+
+## 📁 Estrutura do projeto
+```
+src/
+├── components/          # Componentes reutilizáveis
+├── features/           # Funcionalidades específicas
+├── lib/                # Configurações e serviços
+├── pages/              # Páginas da aplicação
+├── providers/          # Providers do React
+├── stores/             # Gerenciamento de estado global
+└── utils/              # Funções utilitárias
+```
 
 ## Arquitetura
 

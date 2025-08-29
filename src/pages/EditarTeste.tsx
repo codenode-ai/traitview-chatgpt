@@ -94,9 +94,19 @@ export default function EditarTeste() {
         nome: data.name,
         descricao: data.description,
         categoria: "Customizado",
-        perguntas: data.questions,
-        faixas_interpretacao: data.bands,
-        tipo: "customizado",
+        perguntas: data.questions.map((q, index) => ({
+          id: q.id || index + 1, // Garantir que tenha um ID
+          texto: q.texto || "", // Garantir que tenha texto
+          ordem: q.ordem !== undefined ? q.ordem : index + 1 // Garantir que tenha ordem
+        })),
+        faixas_interpretacao: data.bands.map(band => ({
+          min: band.min !== undefined ? band.min : 1,
+          max: band.max !== undefined ? band.max : 5,
+          label: band.label || "Não definida",
+          cor: "#4a90e2" // Cor padrão, pode ser customizada
+        })),
+        tipo: "customizado" as const, // Tipagem específica para evitar erro
+        criado_por: null, // Não há usuário logado no single-tenant
         versao: 1,
         ativo: true
       };
