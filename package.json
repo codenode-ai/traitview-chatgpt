@@ -7,7 +7,8 @@
     "dev": "vite",
     "dev:network": "vite --host --port 3001",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && vercel --prod"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
