@@ -1,8 +1,8 @@
+@import './components/ui/select.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import './components/ui/select.css';
 
 :root {
   --radius: 1rem;
