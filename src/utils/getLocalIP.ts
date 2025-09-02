@@ -32,6 +32,12 @@ export function getLocalIP(): Promise<string> {
 
 // Função para obter o IP local com fallback
 export async function getLocalOrigin(): Promise<string> {
+  // Se estiver em produção (deploy), usar a URL atual da página
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return `${window.location.protocol}//${window.location.host}`;
+  }
+  
+  // Se estiver em desenvolvimento local, tentar obter o IP local
   try {
     const ip = await getLocalIP();
     return `http://${ip}:3001`;
