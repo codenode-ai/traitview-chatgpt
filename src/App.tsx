@@ -82,6 +82,7 @@ export default function App() {
         <Route path="relatorios" element={<Relatorios />} />
       </Route>
       <Route path="/avaliacao/:token" element={<AvaliacaoPublica />} />
+      <Route path="/avaliacao" element={<AvaliacaoPublica />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

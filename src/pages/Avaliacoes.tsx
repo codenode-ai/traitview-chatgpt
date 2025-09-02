@@ -75,12 +75,18 @@ export default function Avaliacoes() {
 
         // Formatar links para exibição (apenas um link para todos os testes)
         // Usamos o link da primeira resposta, mas todas as respostas estão associadas à mesma avaliação
-        return [{
+        const linkData = {
           id: respostas[0].id,
           testName: `${selectedTests.length} testes selecionados`,
           link: `${localOrigin}/avaliacao/${respostas[0].link_acesso}`,
           expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 dias a partir de agora
-        }];
+        };
+        
+        console.log("🔗 Link gerado:", linkData);
+        console.log("🌐 Local origin:", localOrigin);
+        console.log("🔑 Link acesso:", respostas[0].link_acesso);
+        
+        return [linkData];
       } catch (error: any) {
         console.error("Erro ao gerar links:", error);
         throw new Error(error.message || "Erro ao gerar links. Verifique o console para mais detalhes.");
