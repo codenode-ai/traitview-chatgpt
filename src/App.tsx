@@ -83,6 +83,7 @@ export default function App() {
       </Route>
       <Route path="/avaliacao/:token" element={<AvaliacaoPublica />} />
       <Route path="/avaliacao" element={<AvaliacaoPublica />} />
+      <Route path="/teste-publico" element={<div className="p-10 text-center"><h1>Teste Público - Funcionando!</h1></div>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
