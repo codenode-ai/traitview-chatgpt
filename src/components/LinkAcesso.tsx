@@ -9,6 +9,7 @@ interface LinkAcessoProps {
 }
 
 export function LinkAcesso({ link, expiresAt, testName }: LinkAcessoProps) {
+  console.log("🔗 LinkAcesso renderizando:", { link, expiresAt, testName });
   const [copied, setCopied] = useState(false);
   const [timeLeft, setTimeLeft] = useState<string>("");
 

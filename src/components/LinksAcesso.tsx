@@ -10,7 +10,10 @@ interface LinksAcessoProps {
 }
 
 export function LinksAcesso({ links }: LinksAcessoProps) {
+  console.log("🔍 LinksAcesso recebeu links:", links);
+  
   if (links.length === 0) {
+    console.log("❌ LinksAcesso: Nenhum link para renderizar");
     return (
       <div className="text-sm text-muted-foreground">
         Nenhum link de acesso gerado.
@@ -18,6 +21,7 @@ export function LinksAcesso({ links }: LinksAcessoProps) {
     );
   }
 
+  console.log("✅ LinksAcesso: Renderizando", links.length, "links");
   return (
     <div className="space-y-3">
       {links.map(({ id, testName, link, expiresAt }) => (
